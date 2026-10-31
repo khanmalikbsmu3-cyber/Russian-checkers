@@ -1,11 +1,12 @@
 {
   "name": "russian-checkers",
-  "version": "1.0.0",
-  "description": "Russian Checkers Game",
+  "version": "2.0.0",
+  "description": "Russian Checkers Pro",
   "scripts": {
-    "build": "echo 'No build step needed for plain HTML'"
+    "build": "echo 'No build step needed'"
   },
   "devDependencies": {
+    "@capacitor/android": "^5.0.0",
     "@capacitor/cli": "^5.0.0",
     "@capacitor/core": "^5.0.0",
     "@capacitor/ios": "^5.0.0"
