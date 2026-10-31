@@ -1,0 +1,6 @@
+{
+  "appId": "com.urish.checkers",
+  "appName": "Russian Checkers",
+  "webDir": ".",
+  "bundledWebRuntime": false
+}
