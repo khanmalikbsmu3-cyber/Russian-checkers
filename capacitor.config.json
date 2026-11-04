@@ -1,5 +1,11 @@
 {
   "appId": "com.urish.checkers",
   "appName": "Russian Checkers",
-  "webDir": "www"
+  "webDir": "www",
+  "plugins": {
+    "StatusBar": {
+      "overlaysWebView": true,
+      "style": "DARK"
+    }
+  }
 }
