@@ -246,11 +246,11 @@
 </div>
 
 <script>
-const SAVE_KEY = 'checkers_save_state';
-const THEME_KEY = 'checkers_theme';
-const RULES_KEY = 'checkers_rules';
+var SAVE_KEY = 'checkers_save_state';
+var THEME_KEY = 'checkers_theme';
+var RULES_KEY = 'checkers_rules';
 
-let audioCtx = null;
+var audioCtx = null;
 function initAudio() {
   if (!audioCtx) {
     try {
@@ -264,9 +264,9 @@ window.addEventListener('pointerdown', initAudio, {once: true});
 function playSound(type) {
   if (!audioCtx) return;
   try {
-      const t = audioCtx.currentTime;
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
+      var t = audioCtx.currentTime;
+      var osc = audioCtx.createOscillator();
+      var gain = audioCtx.createGain();
       osc.connect(gain);
       gain.connect(audioCtx.destination);
       
@@ -296,28 +296,28 @@ function triggerHaptic() {
   }
 }
 
-const boardEl = document.getElementById('board');
-const panelW = document.getElementById('panel-w');
-const panelB = document.getElementById('panel-b');
-const subW = document.getElementById('sub-w');
-const subB = document.getElementById('sub-b');
-const titleB = document.getElementById('title-b');
-const countW = document.getElementById('count-w');
-const countB = document.getElementById('count-b');
-const msgOverlay = document.getElementById('msg-overlay');
-const menuModal = document.getElementById('menu-modal');
-const menuStatus = document.getElementById('menu-status');
+var boardEl = document.getElementById('board');
+var panelW = document.getElementById('panel-w');
+var panelB = document.getElementById('panel-b');
+var subW = document.getElementById('sub-w');
+var subB = document.getElementById('sub-b');
+var titleB = document.getElementById('title-b');
+var countW = document.getElementById('count-w');
+var countB = document.getElementById('count-b');
+var msgOverlay = document.getElementById('msg-overlay');
+var menuModal = document.getElementById('menu-modal');
+var menuStatus = document.getElementById('menu-status');
 
-const DIRS = [[-1,-1], [-1,1], [1,-1], [1,1]];
+var DIRS = [[-1,-1], [-1,1], [1,-1], [1,1]];
 
 function getPieceSVG(side, isKing) {
-  const outer = side === 'w' ? 'url(#wOuterRim)' : 'url(#bOuterRim)';
-  const groove = side === 'w' ? 'url(#wGrooveDark)' : 'url(#bGrooveDark)';
-  const center = side === 'w' ? 'url(#wCenterDomed)' : 'url(#bCenterDomed)';
-  const strokeEdge = side === 'w' ? '#78644c' : '#000000';
-  const hiRing = side === 'w' ? 'rgba(255,255,255,0.85)' : 'rgba(255,255,255,0.22)';
+  var outer = side === 'w' ? 'url(#wOuterRim)' : 'url(#bOuterRim)';
+  var groove = side === 'w' ? 'url(#wGrooveDark)' : 'url(#bGrooveDark)';
+  var center = side === 'w' ? 'url(#wCenterDomed)' : 'url(#bCenterDomed)';
+  var strokeEdge = side === 'w' ? '#78644c' : '#000000';
+  var hiRing = side === 'w' ? 'rgba(255,255,255,0.85)' : 'rgba(255,255,255,0.22)';
   
-  let crownStr = '';
+  var crownStr = '';
   if (isKing) {
     crownStr = '<g transform="translate(26, 24) scale(2)"><path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z" fill="url(#crownGold)" stroke="#451a03" stroke-width="1"/></g>';
   }
@@ -339,36 +339,38 @@ function getPieceSVG(side, isKing) {
 document.getElementById('mini-w').innerHTML = getPieceSVG('w', false);
 document.getElementById('mini-b').innerHTML = getPieceSVG('b', false);
 
-let b = [];
-let turn = 'w';
-let selected = null;
-let targets = [];
-let multiJumpPiece = null;
-let removedDuringTurn = [];
-let lastMove = null;
-let historyStack = [];
-let gameOver = false;
-let cellDOM = [];
-let pieceNodes = new Map();
-let pieceIdCounter = 0;
-let halfMoveClock = 0;
+var b = [];
+var turn = 'w';
+var selected = null;
+var targets = [];
+var multiJumpPiece = null;
+var removedDuringTurn = [];
+var lastMove = null;
+var historyStack = [];
+var gameOver = false;
+var cellDOM = [];
+var pieceNodes = new Map();
+var pieceIdCounter = 0;
+var halfMoveClock = 0;
 
-let isVsAI = true;
-let aiSide = 'b';
-let aiMoveTimeout = null;
-let currentRuleset = localStorage.getItem(RULES_KEY) || 'russian'; 
+var isVsAI = true;
+var aiSide = 'b';
+var aiMoveTimeout = null;
+var currentRuleset = localStorage.getItem(RULES_KEY) || 'russian'; 
 
 function createGrid() {
   if (!boardEl) return;
   boardEl.innerHTML = '';
   cellDOM = [];
   pieceNodes.clear();
-  for (let r = 0; r < 8; r++) {
-    let rowDOM = [];
-    for (let c = 0; c < 8; c++) {
-      const cell = document.createElement('div');
+  for (var r = 0; r < 8; r++) {
+    var rowDOM = [];
+    for (var c = 0; c < 8; c++) {
+      var cell = document.createElement('div');
       cell.className = 'cell ' + ((r + c) % 2 === 1 ? 'dark' : 'light');
-      cell.addEventListener('pointerdown', (e) => { e.preventDefault(); handleTap(r, c); });
+      (function(row, col) {
+        cell.addEventListener('pointerdown', function(e) { e.preventDefault(); handleTap(row, col); });
+      })(r, c);
       boardEl.appendChild(cell);
       rowDOM.push(cell);
     }
@@ -377,7 +379,11 @@ function createGrid() {
 }
 
 function cloneBoard(source) {
-  return source.map(row => row.map(p => p ? { side: p.side, king: p.king, id: p.id } : null));
+  return source.map(function(row) { 
+      return row.map(function(p) { 
+          return p ? { side: p.side, king: p.king, id: p.id } : null; 
+      }); 
+  });
 }
 
 function persistState() {
@@ -392,7 +398,7 @@ function persistState() {
 }
 
 function saveState() {
-  let lm = null;
+  var lm = null;
   if (lastMove) {
     lm = { from: { r: lastMove.from.r, c: lastMove.from.c }, to: { r: lastMove.to.r, c: lastMove.to.c } };
   }
@@ -403,24 +409,29 @@ function saveState() {
 }
 
 function generateBoard() {
-  b = Array.from({ length: 8 }, () => Array(8).fill(null));
-  for (let r = 0; r < 3; r++) {
-    for (let c = 0; c < 8; c++) {
+  b = [];
+  for (var i = 0; i < 8; i++) {
+    var row = [];
+    for (var j = 0; j < 8; j++) row.push(null);
+    b.push(row);
+  }
+  for (var r = 0; r < 3; r++) {
+    for (var c = 0; c < 8; c++) {
       if ((r + c) % 2 === 1) b[r][c] = { side: 'b', king: false, id: pieceIdCounter++ };
     }
   }
-  for (let r = 5; r < 8; r++) {
-    for (let c = 0; c < 8; c++) {
+  for (var r = 5; r < 8; r++) {
+    for (var c = 0; c < 8; c++) {
       if ((r + c) % 2 === 1) b[r][c] = { side: 'w', king: false, id: pieceIdCounter++ };
     }
   }
 }
 
 function loadState() {
-  const saved = localStorage.getItem(SAVE_KEY);
+  var saved = localStorage.getItem(SAVE_KEY);
   if (saved) {
     try {
-      const parsed = JSON.parse(saved);
+      var parsed = JSON.parse(saved);
       if (parsed.b && parsed.turn) {
         b = parsed.b; turn = parsed.turn; lastMove = parsed.lastMove; historyStack = parsed.historyStack || [];
         gameOver = parsed.gameOver; multiJumpPiece = parsed.multiJumpPiece; removedDuringTurn = parsed.removedDuringTurn || [];
@@ -437,15 +448,28 @@ function loadState() {
 
 function updateMenuUI() {
   if (titleB) titleB.textContent = isVsAI ? "Computer (Black)" : "Player 2 (Black)";
-  document.querySelectorAll('.mode-btn').forEach(btn => {
-    if (btn.dataset.mode === (isVsAI ? '1' : '2')) btn.classList.add('active'); else btn.classList.remove('active');
-  });
-  document.querySelectorAll('.rules-btn').forEach(btn => {
-    if (btn.dataset.rules === currentRuleset) btn.classList.add('active'); else btn.classList.remove('active');
-  });
+  
+  var modeBtns = document.querySelectorAll('.mode-btn');
+  for(var i=0; i<modeBtns.length; i++) {
+    if (modeBtns[i].dataset.mode === (isVsAI ? '1' : '2')) {
+        modeBtns[i].classList.add('active');
+    } else {
+        modeBtns[i].classList.remove('active');
+    }
+  }
+  
+  var rulesBtns = document.querySelectorAll('.rules-btn');
+  for(var i=0; i<rulesBtns.length; i++) {
+    if (rulesBtns[i].dataset.rules === currentRuleset) {
+        rulesBtns[i].classList.add('active');
+    } else {
+        rulesBtns[i].classList.remove('active');
+    }
+  }
 }
 
-function initGame(forceNew = false) {
+function initGame(forceNew) {
+  if (forceNew === undefined) forceNew = false;
   clearTimeout(aiMoveTimeout);
   createGrid();
   if (forceNew || !loadState()) {
@@ -458,8 +482,8 @@ function initGame(forceNew = false) {
     selected = null; targets = [];
   }
   if (msgOverlay) msgOverlay.classList.remove('show');
-  for (let r = 0; r < 8; r++) {
-    for (let c = 0; c < 8; c++) {
+  for (var r = 0; r < 8; r++) {
+    for (var c = 0; c < 8; c++) {
       if (b[r][c]) createPieceNode(b[r][c], r, c);
     }
   }
@@ -469,7 +493,7 @@ function initGame(forceNew = false) {
 
 function createPieceNode(p, r, c) {
   if (pieceNodes.has(p.id)) return pieceNodes.get(p.id);
-  const pieceDiv = document.createElement('div');
+  var pieceDiv = document.createElement('div');
   pieceDiv.className = 'piece';
   pieceDiv.innerHTML = getPieceSVG(p.side, p.king);
   pieceDiv.style.transform = 'translate(' + (c * 100) + '%, ' + (r * 100) + '%)';
@@ -481,36 +505,42 @@ function createPieceNode(p, r, c) {
 function inBounds(r, c) { return r >= 0 && r < 8 && c >= 0 && c < 8; }
 
 function getCaptures(r, c, p, boardState, ghosts) {
-  const moves = [];
+  var moves = [];
   if (!p) return moves;
   
-  const isIndianKing = (currentRuleset === 'indian' && p.king);
+  var isIndianKing = (currentRuleset === 'indian' && p.king);
 
   if (!p.king || isIndianKing) {
-    for (const [dr, dc] of DIRS) {
+    for (var i=0; i<DIRS.length; i++) {
+      var dr = DIRS[i][0];
+      var dc = DIRS[i][1];
+      
       if (currentRuleset === 'indian' && !p.king) {
-        const forward = (p.side === 'w') ? -1 : 1;
+        var forward = (p.side === 'w') ? -1 : 1;
         if (dr !== forward) continue; 
       }
       
-      const mr = r + dr, mc = c + dc; const tr = r + 2 * dr, tc = c + 2 * dc;
+      var mr = r + dr, mc = c + dc; 
+      var tr = r + 2 * dr, tc = c + 2 * dc;
       if (inBounds(tr, tc) && inBounds(mr, mc)) {
-        const midP = boardState[mr][mc];
-        let isAlreadyEaten = false;
-        for (let g of ghosts) { if (g.r === mr && g.c === mc) isAlreadyEaten = true; }
+        var midP = boardState[mr][mc];
+        var isAlreadyEaten = false;
+        for (var j=0; j<ghosts.length; j++) { if (ghosts[j].r === mr && ghosts[j].c === mc) isAlreadyEaten = true; }
         if (midP && midP.side !== p.side && !isAlreadyEaten && !boardState[tr][tc]) {
           moves.push({ r: tr, c: tc, cap: { r: mr, c: mc } });
         }
       }
     }
   } else {
-    for (const [dr, dc] of DIRS) {
-      let step = 1, enemy = null;
+    for (var i=0; i<DIRS.length; i++) {
+      var dr = DIRS[i][0];
+      var dc = DIRS[i][1];
+      var step = 1, enemy = null;
       while (inBounds(r + step * dr, c + step * dc)) {
-        const cr = r + step * dr, cc = c + step * dc;
-        const occ = boardState[cr][cc];
-        let isAlreadyEaten = false;
-        for (let g of ghosts) { if (g.r === cr && g.c === cc) isAlreadyEaten = true; }
+        var cr = r + step * dr, cc = c + step * dc;
+        var occ = boardState[cr][cc];
+        var isAlreadyEaten = false;
+        for (var j=0; j<ghosts.length; j++) { if (ghosts[j].r === cr && ghosts[j].c === cc) isAlreadyEaten = true; }
         if (occ) {
           if (occ.side === p.side || isAlreadyEaten || enemy) break;
           enemy = { r: cr, c: cc };
@@ -525,22 +555,26 @@ function getCaptures(r, c, p, boardState, ghosts) {
 }
 
 function getSimpleMoves(r, c, p) {
-  const moves = [];
+  var moves = [];
   if (!p) return moves;
 
-  const isIndianKing = (currentRuleset === 'indian' && p.king);
+  var isIndianKing = (currentRuleset === 'indian' && p.king);
 
   if (p.king && !isIndianKing) {
-    for (const [dr, dc] of DIRS) {
-      let step = 1;
+    for (var i=0; i<DIRS.length; i++) {
+      var dr = DIRS[i][0];
+      var dc = DIRS[i][1];
+      var step = 1;
       while (inBounds(r + step * dr, c + step * dc) && !b[r + step * dr][c + step * dc]) {
         moves.push({ r: r + step * dr, c: c + step * dc }); step++;
       }
     }
   } else {
-    const directions = (p.king) ? DIRS : (p.side === 'w' ? [[-1,-1], [-1,1]] : [[1,-1], [1,1]]);
-    for (const [dr, dc] of directions) {
-      const tr = r + dr, tc = c + dc;
+    var directions = (p.king) ? DIRS : (p.side === 'w' ? [[-1,-1], [-1,1]] : [[1,-1], [1,1]]);
+    for (var i = 0; i < directions.length; i++) {
+      var dr = directions[i][0];
+      var dc = directions[i][1];
+      var tr = r + dr, tc = c + dc;
       if (inBounds(tr, tc) && !b[tr][tc]) moves.push({ r: tr, c: tc });
     }
   }
@@ -548,12 +582,12 @@ function getSimpleMoves(r, c, p) {
 }
 
 function getAllCaptures(side) {
-  const list = [];
-  for (let r = 0; r < 8; r++) {
-    for (let c = 0; c < 8; c++) {
-      const p = b[r][c];
+  var list = [];
+  for (var r = 0; r < 8; r++) {
+    for (var c = 0; c < 8; c++) {
+      var p = b[r][c];
       if (p && p.side === side) {
-        const caps = getCaptures(r, c, p, b, []);
+        var caps = getCaptures(r, c, p, b, []);
         if (caps.length > 0) list.push({ from: { r: r, c: c }, moves: caps });
       }
     }
@@ -565,16 +599,17 @@ function showMessage(text) {
   if (!msgOverlay) return;
   msgOverlay.textContent = text; 
   msgOverlay.classList.add('show');
-  setTimeout(() => msgOverlay.classList.remove('show'), 1800);
+  setTimeout(function() { msgOverlay.classList.remove('show'); }, 1800);
 }
 
-function handleTap(r, c, fromAI = false) {
+function handleTap(r, c, fromAI) {
+  if (fromAI === undefined) fromAI = false;
   if (gameOver) return;
   if (isVsAI && turn === aiSide && !fromAI) return;
 
   if (selected) {
-    let dest = null;
-    for (let t of targets) { if (t.r === r && t.c === c) dest = t; }
+    var dest = null;
+    for (var i=0; i<targets.length; i++) { if (targets[i].r === r && targets[i].c === c) dest = targets[i]; }
     if (dest) {
       if (!multiJumpPiece) {
         saveState();
@@ -590,19 +625,19 @@ function handleTap(r, c, fromAI = false) {
     if ((r !== multiJumpPiece.r || c !== multiJumpPiece.c) && !fromAI) showMessage("Must continue jumping!");
     return;
   }
-  const p = b[r][c];
+  var p = b[r][c];
   if (p && p.side === turn) {
-    const allCaps = getAllCaptures(turn);
+    var allCaps = getAllCaptures(turn);
     if (allCaps.length > 0) {
-      let pieceCaps = null;
-      for (let item of allCaps) { if (item.from.r === r && item.from.c === c) pieceCaps = item; }
+      var pieceCaps = null;
+      for (var i=0; i<allCaps.length; i++) { if (allCaps[i].from.r === r && allCaps[i].from.c === c) pieceCaps = allCaps[i]; }
       if (!pieceCaps) { 
           if (!fromAI) showMessage("Capture is mandatory!"); 
           return; 
       }
       selected = { r: r, c: c }; targets = pieceCaps.moves;
     } else {
-      const simple = getSimpleMoves(r, c, p);
+      var simple = getSimpleMoves(r, c, p);
       if (simple.length === 0) return;
       selected = { r: r, c: c }; targets = simple;
     }
@@ -612,8 +647,9 @@ function handleTap(r, c, fromAI = false) {
   }
 }
 
-function executeMove(fr, fc, target, fromAI = false) {
-  const p = b[fr][fc];
+function executeMove(fr, fc, target, fromAI) {
+  if (fromAI === undefined) fromAI = false;
+  var p = b[fr][fc];
   b[target.r][target.c] = p; b[fr][fc] = null;
   
   playSound('clack');
@@ -634,14 +670,16 @@ function executeMove(fr, fc, target, fromAI = false) {
 
   if (target.cap) {
     removedDuringTurn.push(target.cap);
-    const furtherCaps = getCaptures(target.r, target.c, p, b, removedDuringTurn);
+    var furtherCaps = getCaptures(target.r, target.c, p, b, removedDuringTurn);
     if (furtherCaps.length > 0) {
       multiJumpPiece = { r: target.r, c: target.c }; selected = { r: target.r, c: target.c }; targets = furtherCaps;
       render(); persistState(); 
       triggerAIIfNeeded();
       return;
     }
-    for (let ghost of removedDuringTurn) b[ghost.r][ghost.c] = null;
+    for (var i=0; i<removedDuringTurn.length; i++) {
+        b[removedDuringTurn[i].r][removedDuringTurn[i].c] = null;
+    }
     removedDuringTurn = [];
   }
 
@@ -651,12 +689,12 @@ function executeMove(fr, fc, target, fromAI = false) {
 }
 
 function checkGameOver() {
-  const oppCaps = getAllCaptures(turn);
-  let oppPieces = 0;
-  let oppSimple = false;
+  var oppCaps = getAllCaptures(turn);
+  var oppPieces = 0;
+  var oppSimple = false;
   
-  for (let r = 0; r < 8; r++) {
-    for (let c = 0; c < 8; c++) {
+  for (var r = 0; r < 8; r++) {
+    for (var c = 0; c < 8; c++) {
         if (b[r][c] && b[r][c].side === turn) {
             oppPieces++;
             if (getSimpleMoves(r, c, b[r][c]).length > 0) oppSimple = true;
@@ -666,8 +704,8 @@ function checkGameOver() {
 
   if (oppPieces === 0 || (oppCaps.length === 0 && !oppSimple)) {
     gameOver = true;
-    const winner = turn === 'w' ? (isVsAI ? 'Computer (Black)' : 'Player 2 (Black)') : 'Player 1 (White)';
-    showMessage("🏆 " + winner + " Wins!");
+    var winner = turn === 'w' ? (isVsAI ? 'Computer (Black)' : 'Player 2 (Black)') : 'Player 1 (White)';
+    showMessage('🏆 ' + winner + ' Wins!');
     playSound('thud');
     persistState();
     return;
@@ -682,20 +720,20 @@ function checkGameOver() {
 }
 
 function render() {
-  let wCount = 0; let bCount = 0;
-  const allCaps = getAllCaptures(turn);
-  let capCoords = {};
-  for (let item of allCaps) capCoords[item.from.r + ',' + item.from.c] = true;
+  var wCount = 0; var bCount = 0;
+  var allCaps = getAllCaptures(turn);
+  var capCoords = {};
+  for (var i=0; i<allCaps.length; i++) capCoords[allCaps[i].from.r + ',' + allCaps[i].from.c] = true;
 
-  for (let r = 0; r < 8; r++) {
-    for (let c = 0; c < 8; c++) {
-      const cell = cellDOM[r][c];
+  for (var r = 0; r < 8; r++) {
+    for (var c = 0; c < 8; c++) {
+      var cell = cellDOM[r][c];
       cell.className = 'cell ' + ((r + c) % 2 === 1 ? 'dark' : 'light');
       if (lastMove) {
         if (lastMove.from.r === r && lastMove.from.c === c) cell.classList.add('last-from');
         if (lastMove.to.r === r && lastMove.to.c === c) cell.classList.add('last-to');
       }
-      const p = b[r][c];
+      var p = b[r][c];
       if (!gameOver && p && p.side === turn && !multiJumpPiece) {
         if (!isVsAI || turn !== aiSide) {
             if (allCaps.length > 0) { if (capCoords[r + ',' + c]) cell.classList.add('movable', 'movable-cap'); } 
@@ -703,8 +741,8 @@ function render() {
         }
       }
       if (selected && selected.r === r && selected.c === c) cell.classList.add('selected');
-      let targetMove = null;
-      for (let t of targets) { if (t.r === r && t.c === c) targetMove = t; }
+      var targetMove = null;
+      for (var t=0; t<targets.length; t++) { if (targets[t].r === r && targets[t].c === c) targetMove = targets[t]; }
       if (targetMove) {
         cell.classList.add('target');
         if (targetMove.cap) cell.classList.add('target-cap');
@@ -712,13 +750,13 @@ function render() {
     }
   }
 
-  let validIds = {};
-  for (let r = 0; r < 8; r++) {
-    for (let c = 0; c < 8; c++) {
+  var validIds = {};
+  for (var r = 0; r < 8; r++) {
+    for (var c = 0; c < 8; c++) {
       if (b[r][c]) {
         validIds[b[r][c].id] = true;
         wCount += (b[r][c].side === 'w' ? 1 : 0); bCount += (b[r][c].side === 'b' ? 1 : 0);
-        let node = pieceNodes.get(b[r][c].id);
+        var node = pieceNodes.get(b[r][c].id);
         if (!node) node = createPieceNode(b[r][c], r, c);
         
         node.style.transform = 'translate(' + (c * 100) + '%, ' + (r * 100) + '%)';
@@ -730,15 +768,15 @@ function render() {
     }
   }
 
-  for (const [id, node] of pieceNodes.entries()) {
+  pieceNodes.forEach(function(node, id) {
     if (!validIds[id]) {
       node.style.opacity = '0'; 
       node.style.transform = node.style.transform + ' scale(0)';
-      setTimeout(() => { if (node.parentNode) node.parentNode.removeChild(node); pieceNodes.delete(id); }, 300);
+      setTimeout(function() { if (node.parentNode) node.parentNode.removeChild(node); pieceNodes.delete(id); }, 300);
     } else { 
       node.style.opacity = '1'; 
     }
-  }
+  });
 
   if (countW) countW.textContent = wCount; 
   if (countB) countB.textContent = bCount;
@@ -769,73 +807,74 @@ function doAITurn() {
   if (gameOver || turn !== aiSide) return;
 
   if (multiJumpPiece) {
-    const caps = getCaptures(multiJumpPiece.r, multiJumpPiece.c, b[multiJumpPiece.r][multiJumpPiece.c], b, removedDuringTurn);
+    var caps = getCaptures(multiJumpPiece.r, multiJumpPiece.c, b[multiJumpPiece.r][multiJumpPiece.c], b, removedDuringTurn);
     if (caps.length > 0) {
-        const randomCap = caps[Math.floor(Math.random() * caps.length)];
+        var randomCap = caps[Math.floor(Math.random() * caps.length)];
         handleTap(multiJumpPiece.r, multiJumpPiece.c, true);
-        setTimeout(() => handleTap(randomCap.r, randomCap.c, true), 350);
+        setTimeout(function() { handleTap(randomCap.r, randomCap.c, true); }, 350);
     }
     return;
   }
 
-  const allCaps = getAllCaptures(turn);
+  var allCaps = getAllCaptures(turn);
   if (allCaps.length > 0) {
-    const randomStart = allCaps[Math.floor(Math.random() * allCaps.length)];
-    const randomMove = randomStart.moves[Math.floor(Math.random() * randomStart.moves.length)];
+    var randomStart = allCaps[Math.floor(Math.random() * allCaps.length)];
+    var randomMove = randomStart.moves[Math.floor(Math.random() * randomStart.moves.length)];
     handleTap(randomStart.from.r, randomStart.from.c, true);
-    setTimeout(() => handleTap(randomMove.r, randomMove.c, true), 350);
+    setTimeout(function() { handleTap(randomMove.r, randomMove.c, true); }, 350);
     return;
   }
 
-  let moves = [];
-  for (let r = 0; r < 8; r++) {
-    for (let c = 0; c < 8; c++) {
-      const p = b[r][c];
+  var moves = [];
+  for (var r = 0; r < 8; r++) {
+    for (var c = 0; c < 8; c++) {
+      var p = b[r][c];
       if (p && p.side === turn) {
-        const mvs = getSimpleMoves(r, c, p);
-        for (let m of mvs) moves.push({from: {r: r, c: c}, to: m});
+        var mvs = getSimpleMoves(r, c, p);
+        for (var i=0; i<mvs.length; i++) moves.push({from: {r: r, c: c}, to: mvs[i]});
       }
     }
   }
 
   if (moves.length === 0) return;
 
-  let bestScore = -Infinity;
-  let bestMoves = [];
+  var bestScore = -Infinity;
+  var bestMoves = [];
 
-  for (let m of moves) {
-    let simB = cloneBoard(b);
-    let p = simB[m.from.r][m.from.c];
-    simB[m.to.r][m.to.c] = p;
+  for (var i=0; i<moves.length; i++) {
+    var m = moves[i];
+    var simB = cloneBoard(b);
+    var pSim = simB[m.from.r][m.from.c];
+    simB[m.to.r][m.to.c] = pSim;
     simB[m.from.r][m.from.c] = null;
     
-    if (!p.king && ((p.side === 'w' && m.to.r === 0) || (p.side === 'b' && m.to.r === 7))) {
+    if (!pSim.king && ((pSim.side === 'w' && m.to.r === 0) || (pSim.side === 'b' && m.to.r === 7))) {
         simB[m.to.r][m.to.c].king = true;
     }
 
-    let myScore = 0;
-    let oppScore = 0;
-    let danger = 0;
+    var myScore = 0;
+    var oppScore = 0;
+    var danger = 0;
 
-    for(let ir=0; ir<8; ir++) {
-      for(let ic=0; ic<8; ic++) {
-        let piece = simB[ir][ic];
+    for(var ir=0; ir<8; ir++) {
+      for(var ic=0; ic<8; ic++) {
+        var piece = simB[ir][ic];
         if (piece) {
-          let val = piece.king ? 3 : 1;
+          var val = piece.king ? 3 : 1;
           if (!piece.king) val += (piece.side === 'b' ? ir * 0.02 : (7 - ir) * 0.02);
           if (ic > 1 && ic < 6) val += 0.03;
           if (piece.side === turn) {
               myScore += val;
           } else {
               oppScore += val;
-              let caps = getCaptures(ir, ic, piece, simB, []);
-              danger += caps.length * 2.5; 
+              var simCaps = getCaptures(ir, ic, piece, simB, []);
+              danger += simCaps.length * 2.5; 
           }
         }
       }
     }
     
-    let score = myScore - oppScore - danger + (Math.random() * 0.01); 
+    var score = myScore - oppScore - danger + (Math.random() * 0.01); 
 
     if (score > bestScore) {
         bestScore = score;
@@ -845,12 +884,12 @@ function doAITurn() {
     }
   }
 
-  const chosen = bestMoves[Math.floor(Math.random() * bestMoves.length)];
+  var chosen = bestMoves[Math.floor(Math.random() * bestMoves.length)];
   handleTap(chosen.from.r, chosen.from.c, true);
-  setTimeout(() => handleTap(chosen.to.r, chosen.to.c, true), 350);
+  setTimeout(function() { handleTap(chosen.to.r, chosen.to.c, true); }, 350);
 }
 
-document.getElementById('btn-undo').addEventListener('pointerdown', (e) => {
+document.getElementById('btn-undo').addEventListener('pointerdown', function(e) {
   e.preventDefault();
   if (isVsAI && turn === aiSide && !gameOver) return; 
   if (gameOver) gameOver = false;
@@ -864,40 +903,40 @@ document.getElementById('btn-undo').addEventListener('pointerdown', (e) => {
         showMessage("Start of game"); return; 
     } 
   }
-  const prevState = historyStack[historyStack.length - 1];
+  var prevState = historyStack[historyStack.length - 1];
   b = cloneBoard(prevState.b); turn = prevState.turn;
   lastMove = prevState.lastMove ? { from: { r: prevState.lastMove.from.r, c: prevState.lastMove.from.c }, to: { r: prevState.lastMove.to.r, c: prevState.lastMove.to.c } } : null;
   halfMoveClock = prevState.halfMoveClock || 0;
   selected = null; targets = [];
   boardEl.innerHTML = ''; createGrid();
-  for (let r = 0; r < 8; r++) { for (let c = 0; c < 8; c++) { if (b[r][c]) createPieceNode(b[r][c], r, c); } }
+  for (var r = 0; r < 8; r++) { for (var c = 0; c < 8; c++) { if (b[r][c]) createPieceNode(b[r][c], r, c); } }
   render(); persistState();
   triggerAIIfNeeded();
 });
 
-document.getElementById('btn-menu').addEventListener('pointerdown', (e) => {
+document.getElementById('btn-menu').addEventListener('pointerdown', function(e) {
   e.preventDefault(); 
   if (rulesBox) rulesBox.classList.remove('open'); 
   if (menuModal) menuModal.classList.add('open');
 });
 
-document.getElementById('btn-resume').addEventListener('pointerdown', (e) => {
+document.getElementById('btn-resume').addEventListener('pointerdown', function(e) {
   e.preventDefault(); 
   if (menuModal) menuModal.classList.remove('open');
 });
 
-document.getElementById('btn-restart').addEventListener('pointerdown', (e) => {
+document.getElementById('btn-restart').addEventListener('pointerdown', function(e) {
   e.preventDefault(); 
   if (menuModal) menuModal.classList.remove('open'); 
   initGame(true); showMessage("New Game Started");
 });
 
-document.getElementById('btn-draw').addEventListener('pointerdown', (e) => {
+document.getElementById('btn-draw').addEventListener('pointerdown', function(e) {
   e.preventDefault();
   if (gameOver) return;
   if (menuModal) menuModal.classList.remove('open');
-  const offeringPlayer = turn === 'w' ? 'Player 1' : (isVsAI ? 'Computer' : 'Player 2');
-  const acceptingPlayer = turn === 'w' ? (isVsAI ? 'Computer' : 'Player 2') : 'Player 1';
+  var offeringPlayer = turn === 'w' ? 'Player 1' : (isVsAI ? 'Computer' : 'Player 2');
+  var acceptingPlayer = turn === 'w' ? (isVsAI ? 'Computer' : 'Player 2') : 'Player 1';
   
   if (isVsAI) { showMessage("🤖 Computer Refuses Draw!"); return; }
   if (confirm(offeringPlayer + " offers a draw. Does " + acceptingPlayer + " accept?")) {
@@ -905,61 +944,64 @@ document.getElementById('btn-draw').addEventListener('pointerdown', (e) => {
   }
 });
 
-document.getElementById('btn-toggle-rules').addEventListener('pointerdown', (e) => {
+document.getElementById('btn-toggle-rules').addEventListener('pointerdown', function(e) {
   e.preventDefault(); 
   if (rulesBox) rulesBox.classList.toggle('open');
 });
 
 if (menuModal) {
-    menuModal.addEventListener('pointerdown', (e) => {
+    menuModal.addEventListener('pointerdown', function(e) {
       if (e.target === menuModal) menuModal.classList.remove('open');
     });
 }
 
-const themes = ['theme-wood', 'theme-marble', 'theme-classic'];
-const savedTheme = localStorage.getItem(THEME_KEY) || 'theme-wood';
+var themes = ['theme-wood', 'theme-marble', 'theme-classic'];
+var savedTheme = localStorage.getItem(THEME_KEY) || 'theme-wood';
 document.body.classList.add(savedTheme);
 
-document.querySelectorAll('.theme-btn').forEach(btn => {
-  if (btn.dataset.theme === savedTheme) btn.classList.add('active'); else btn.classList.remove('active');
-  btn.addEventListener('pointerdown', (e) => {
+var themeBtns = document.querySelectorAll('.theme-btn');
+for(var i=0; i<themeBtns.length; i++) {
+  if (themeBtns[i].dataset.theme === savedTheme) themeBtns[i].classList.add('active'); else themeBtns[i].classList.remove('active');
+  themeBtns[i].addEventListener('pointerdown', function(e) {
     e.preventDefault();
-    document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    document.body.classList.remove(...themes);
-    document.body.classList.add(btn.dataset.theme);
-    localStorage.setItem(THEME_KEY, btn.dataset.theme);
+    for (var j=0; j<themeBtns.length; j++) themeBtns[j].classList.remove('active');
+    this.classList.add('active');
+    for (var k=0; k<themes.length; k++) document.body.classList.remove(themes[k]);
+    document.body.classList.add(this.dataset.theme);
+    localStorage.setItem(THEME_KEY, this.dataset.theme);
   });
-});
+}
 
-document.querySelectorAll('.mode-btn').forEach(btn => {
-  btn.addEventListener('pointerdown', (e) => {
+var modeBtns = document.querySelectorAll('.mode-btn');
+for(var i=0; i<modeBtns.length; i++) {
+  modeBtns[i].addEventListener('pointerdown', function(e) {
     e.preventDefault();
-    if (btn.classList.contains('active')) return; 
+    if (this.classList.contains('active')) return; 
     if (confirm("Switching game modes will restart the current match. Continue?")) {
-        isVsAI = btn.dataset.mode === '1';
-        document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
+        isVsAI = this.dataset.mode === '1';
+        for (var j=0; j<modeBtns.length; j++) modeBtns[j].classList.remove('active');
+        this.classList.add('active');
         if (menuModal) menuModal.classList.remove('open');
         initGame(true);
     }
   });
-});
+}
 
-document.querySelectorAll('.rules-btn').forEach(btn => {
-  btn.addEventListener('pointerdown', (e) => {
+var rulesBtns = document.querySelectorAll('.rules-btn');
+for(var i=0; i<rulesBtns.length; i++) {
+  rulesBtns[i].addEventListener('pointerdown', function(e) {
     e.preventDefault();
-    if (btn.classList.contains('active')) return; 
+    if (this.classList.contains('active')) return; 
     if (confirm("Switching rules will restart the current match. Continue?")) {
-        currentRuleset = btn.dataset.rules;
-        document.querySelectorAll('.rules-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
+        currentRuleset = this.dataset.rules;
+        for (var j=0; j<rulesBtns.length; j++) rulesBtns[j].classList.remove('active');
+        this.classList.add('active');
         localStorage.setItem(RULES_KEY, currentRuleset);
         if (menuModal) menuModal.classList.remove('open');
         initGame(true);
     }
   });
-});
+}
 
 initGame(false);
 </script>
