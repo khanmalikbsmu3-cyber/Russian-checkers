@@ -257,7 +257,9 @@ function initAudio() {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     } catch (e) {}
   }
-  if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+  if (audioCtx && audioCtx.state === 'suspended') {
+      try { audioCtx.resume(); } catch(e) {}
+  }
 }
 window.addEventListener('pointerdown', initAudio, {once: true});
 
@@ -336,8 +338,12 @@ function getPieceSVG(side, isKing) {
   '</svg>';
 }
 
-document.getElementById('mini-w').innerHTML = getPieceSVG('w', false);
-document.getElementById('mini-b').innerHTML = getPieceSVG('b', false);
+if (document.getElementById('mini-w')) {
+    document.getElementById('mini-w').innerHTML = getPieceSVG('w', false);
+}
+if (document.getElementById('mini-b')) {
+    document.getElementById('mini-b').innerHTML = getPieceSVG('b', false);
+}
 
 var b = [];
 var turn = 'w';
@@ -348,42 +354,55 @@ var removedDuringTurn = [];
 var lastMove = null;
 var historyStack = [];
 var gameOver = false;
-var cellDOM = [];
-var pieceNodes = new Map();
+var pieceNodes = {};
 var pieceIdCounter = 0;
 var halfMoveClock = 0;
 
 var isVsAI = true;
 var aiSide = 'b';
 var aiMoveTimeout = null;
-var currentRuleset = localStorage.getItem(RULES_KEY) || 'russian'; 
+var currentRuleset = 'russian';
+
+try {
+    var storedRules = localStorage.getItem(RULES_KEY);
+    if (storedRules) currentRuleset = storedRules;
+} catch(e) {}
 
 function createGrid() {
   if (!boardEl) return;
   boardEl.innerHTML = '';
-  cellDOM = [];
-  pieceNodes.clear();
+  pieceNodes = {};
   for (var r = 0; r < 8; r++) {
-    var rowDOM = [];
     for (var c = 0; c < 8; c++) {
       var cell = document.createElement('div');
       cell.className = 'cell ' + ((r + c) % 2 === 1 ? 'dark' : 'light');
+      cell.id = 'cell-' + r + '-' + c;
       (function(row, col) {
-        cell.addEventListener('pointerdown', function(e) { e.preventDefault(); handleTap(row, col); });
+        cell.addEventListener('pointerdown', function(e) { 
+            e.preventDefault(); 
+            handleTap(row, col); 
+        });
       })(r, c);
       boardEl.appendChild(cell);
-      rowDOM.push(cell);
     }
-    cellDOM.push(rowDOM);
   }
 }
 
 function cloneBoard(source) {
-  return source.map(function(row) { 
-      return row.map(function(p) { 
-          return p ? { side: p.side, king: p.king, id: p.id } : null; 
-      }); 
-  });
+  var newBoard = [];
+  for (var r = 0; r < 8; r++) {
+      var newRow = [];
+      for (var c = 0; c < 8; c++) {
+          var p = source[r][c];
+          if (p) {
+              newRow.push({ side: p.side, king: p.king, id: p.id });
+          } else {
+              newRow.push(null);
+          }
+      }
+      newBoard.push(newRow);
+  }
+  return newBoard;
 }
 
 function persistState() {
@@ -428,21 +447,21 @@ function generateBoard() {
 }
 
 function loadState() {
-  var saved = localStorage.getItem(SAVE_KEY);
-  if (saved) {
-    try {
-      var parsed = JSON.parse(saved);
-      if (parsed.b && parsed.turn) {
-        b = parsed.b; turn = parsed.turn; lastMove = parsed.lastMove; historyStack = parsed.historyStack || [];
-        gameOver = parsed.gameOver; multiJumpPiece = parsed.multiJumpPiece; removedDuringTurn = parsed.removedDuringTurn || [];
-        pieceIdCounter = parsed.pieceIdCounter || 100; halfMoveClock = parsed.halfMoveClock || 0;
-        isVsAI = parsed.isVsAI !== undefined ? parsed.isVsAI : true;
-        currentRuleset = parsed.currentRuleset || 'russian';
-        updateMenuUI();
-        return true;
+  try {
+      var saved = localStorage.getItem(SAVE_KEY);
+      if (saved) {
+        var parsed = JSON.parse(saved);
+        if (parsed.b && parsed.turn) {
+          b = parsed.b; turn = parsed.turn; lastMove = parsed.lastMove; historyStack = parsed.historyStack || [];
+          gameOver = parsed.gameOver; multiJumpPiece = parsed.multiJumpPiece; removedDuringTurn = parsed.removedDuringTurn || [];
+          pieceIdCounter = parsed.pieceIdCounter || 100; halfMoveClock = parsed.halfMoveClock || 0;
+          isVsAI = parsed.isVsAI !== undefined ? parsed.isVsAI : true;
+          currentRuleset = parsed.currentRuleset || 'russian';
+          updateMenuUI();
+          return true;
+        }
       }
-    } catch (e) {}
-  }
+  } catch (e) {}
   return false;
 }
 
@@ -459,11 +478,11 @@ function updateMenuUI() {
   }
   
   var rulesBtns = document.querySelectorAll('.rules-btn');
-  for(var i=0; i<rulesBtns.length; i++) {
-    if (rulesBtns[i].dataset.rules === currentRuleset) {
-        rulesBtns[i].classList.add('active');
+  for(var j=0; j<rulesBtns.length; j++) {
+    if (rulesBtns[j].dataset.rules === currentRuleset) {
+        rulesBtns[j].classList.add('active');
     } else {
-        rulesBtns[i].classList.remove('active');
+        rulesBtns[j].classList.remove('active');
     }
   }
 }
@@ -492,13 +511,13 @@ function initGame(forceNew) {
 }
 
 function createPieceNode(p, r, c) {
-  if (pieceNodes.has(p.id)) return pieceNodes.get(p.id);
+  if (pieceNodes[p.id]) return pieceNodes[p.id];
   var pieceDiv = document.createElement('div');
   pieceDiv.className = 'piece';
   pieceDiv.innerHTML = getPieceSVG(p.side, p.king);
   pieceDiv.style.transform = 'translate(' + (c * 100) + '%, ' + (r * 100) + '%)';
   if (boardEl) boardEl.appendChild(pieceDiv);
-  pieceNodes.set(p.id, pieceDiv);
+  pieceNodes[p.id] = pieceDiv;
   return pieceDiv;
 }
 
@@ -532,17 +551,17 @@ function getCaptures(r, c, p, boardState, ghosts) {
       }
     }
   } else {
-    for (var i=0; i<DIRS.length; i++) {
-      var dr = DIRS[i][0];
-      var dc = DIRS[i][1];
+    for (var k=0; k<DIRS.length; k++) {
+      var fdr = DIRS[k][0];
+      var fdc = DIRS[k][1];
       var step = 1, enemy = null;
-      while (inBounds(r + step * dr, c + step * dc)) {
-        var cr = r + step * dr, cc = c + step * dc;
+      while (inBounds(r + step * fdr, c + step * fdc)) {
+        var cr = r + step * fdr, cc = c + step * fdc;
         var occ = boardState[cr][cc];
-        var isAlreadyEaten = false;
-        for (var j=0; j<ghosts.length; j++) { if (ghosts[j].r === cr && ghosts[j].c === cc) isAlreadyEaten = true; }
+        var isAlreadyEaten2 = false;
+        for (var l=0; l<ghosts.length; l++) { if (ghosts[l].r === cr && ghosts[l].c === cc) isAlreadyEaten2 = true; }
         if (occ) {
-          if (occ.side === p.side || isAlreadyEaten || enemy) break;
+          if (occ.side === p.side || isAlreadyEaten2 || enemy) break;
           enemy = { r: cr, c: cc };
         } else if (enemy) {
           moves.push({ r: cr, c: cc, cap: enemy });
@@ -571,10 +590,10 @@ function getSimpleMoves(r, c, p) {
     }
   } else {
     var directions = (p.king) ? DIRS : (p.side === 'w' ? [[-1,-1], [-1,1]] : [[1,-1], [1,1]]);
-    for (var i = 0; i < directions.length; i++) {
-      var dr = directions[i][0];
-      var dc = directions[i][1];
-      var tr = r + dr, tc = c + dc;
+    for (var j = 0; j < directions.length; j++) {
+      var ndr = directions[j][0];
+      var ndc = directions[j][1];
+      var tr = r + ndr, tc = c + ndc;
       if (inBounds(tr, tc) && !b[tr][tc]) moves.push({ r: tr, c: tc });
     }
   }
@@ -630,7 +649,7 @@ function handleTap(r, c, fromAI) {
     var allCaps = getAllCaptures(turn);
     if (allCaps.length > 0) {
       var pieceCaps = null;
-      for (var i=0; i<allCaps.length; i++) { if (allCaps[i].from.r === r && allCaps[i].from.c === c) pieceCaps = allCaps[i]; }
+      for (var k=0; k<allCaps.length; k++) { if (allCaps[k].from.r === r && allCaps[k].from.c === c) pieceCaps = allCaps[k]; }
       if (!pieceCaps) { 
           if (!fromAI) showMessage("Capture is mandatory!"); 
           return; 
@@ -723,11 +742,15 @@ function render() {
   var wCount = 0; var bCount = 0;
   var allCaps = getAllCaptures(turn);
   var capCoords = {};
-  for (var i=0; i<allCaps.length; i++) capCoords[allCaps[i].from.r + ',' + allCaps[i].from.c] = true;
+  for (var i=0; i<allCaps.length; i++) {
+      capCoords[allCaps[i].from.r + ',' + allCaps[i].from.c] = true;
+  }
 
   for (var r = 0; r < 8; r++) {
     for (var c = 0; c < 8; c++) {
-      var cell = cellDOM[r][c];
+      var cell = document.getElementById('cell-' + r + '-' + c);
+      if (!cell) continue;
+      
       cell.className = 'cell ' + ((r + c) % 2 === 1 ? 'dark' : 'light');
       if (lastMove) {
         if (lastMove.from.r === r && lastMove.from.c === c) cell.classList.add('last-from');
@@ -751,32 +774,40 @@ function render() {
   }
 
   var validIds = {};
-  for (var r = 0; r < 8; r++) {
-    for (var c = 0; c < 8; c++) {
-      if (b[r][c]) {
-        validIds[b[r][c].id] = true;
-        wCount += (b[r][c].side === 'w' ? 1 : 0); bCount += (b[r][c].side === 'b' ? 1 : 0);
-        var node = pieceNodes.get(b[r][c].id);
-        if (!node) node = createPieceNode(b[r][c], r, c);
+  for (var rr = 0; rr < 8; rr++) {
+    for (var cc = 0; cc < 8; cc++) {
+      if (b[rr][cc]) {
+        validIds[b[rr][cc].id] = true;
+        wCount += (b[rr][cc].side === 'w' ? 1 : 0); bCount += (b[rr][cc].side === 'b' ? 1 : 0);
+        var node = pieceNodes[b[rr][cc].id];
+        if (!node) node = createPieceNode(b[rr][cc], rr, cc);
         
-        node.style.transform = 'translate(' + (c * 100) + '%, ' + (r * 100) + '%)';
-        node.innerHTML = getPieceSVG(b[r][c].side, b[r][c].king);
+        node.style.transform = 'translate(' + (cc * 100) + '%, ' + (rr * 100) + '%)';
+        node.innerHTML = getPieceSVG(b[rr][cc].side, b[rr][cc].king);
         
-        if (selected && selected.r === r && selected.c === c) node.classList.add('selected');
+        if (selected && selected.r === rr && selected.c === cc) node.classList.add('selected');
         else node.classList.remove('selected');
       }
     }
   }
 
-  pieceNodes.forEach(function(node, id) {
-    if (!validIds[id]) {
-      node.style.opacity = '0'; 
-      node.style.transform = node.style.transform + ' scale(0)';
-      setTimeout(function() { if (node.parentNode) node.parentNode.removeChild(node); pieceNodes.delete(id); }, 300);
-    } else { 
-      node.style.opacity = '1'; 
-    }
-  });
+  var pieceKeys = Object.keys(pieceNodes);
+  for (var k=0; k<pieceKeys.length; k++) {
+      var id = pieceKeys[k];
+      var pnode = pieceNodes[id];
+      if (!validIds[id]) {
+          pnode.style.opacity = '0'; 
+          pnode.style.transform = pnode.style.transform + ' scale(0)';
+          (function(nodeToRemove, idToRemove) {
+              setTimeout(function() { 
+                  if (nodeToRemove.parentNode) nodeToRemove.parentNode.removeChild(nodeToRemove); 
+                  delete pieceNodes[idToRemove]; 
+              }, 300);
+          })(pnode, id);
+      } else { 
+          pnode.style.opacity = '1'; 
+      }
+  }
 
   if (countW) countW.textContent = wCount; 
   if (countB) countB.textContent = bCount;
@@ -841,8 +872,8 @@ function doAITurn() {
   var bestScore = -Infinity;
   var bestMoves = [];
 
-  for (var i=0; i<moves.length; i++) {
-    var m = moves[i];
+  for (var mIdx=0; mIdx<moves.length; mIdx++) {
+    var m = moves[mIdx];
     var simB = cloneBoard(b);
     var pSim = simB[m.from.r][m.from.c];
     simB[m.to.r][m.to.c] = pSim;
@@ -889,65 +920,85 @@ function doAITurn() {
   setTimeout(function() { handleTap(chosen.to.r, chosen.to.c, true); }, 350);
 }
 
-document.getElementById('btn-undo').addEventListener('pointerdown', function(e) {
-  e.preventDefault();
-  if (isVsAI && turn === aiSide && !gameOver) return; 
-  if (gameOver) gameOver = false;
-  if (multiJumpPiece) { multiJumpPiece = null; removedDuringTurn = []; } 
-  else { 
-    if (isVsAI && historyStack.length > 2) {
-        historyStack.pop(); historyStack.pop();
-    } else if (!isVsAI && historyStack.length > 1) {
-        historyStack.pop();
-    } else { 
-        showMessage("Start of game"); return; 
-    } 
-  }
-  var prevState = historyStack[historyStack.length - 1];
-  b = cloneBoard(prevState.b); turn = prevState.turn;
-  lastMove = prevState.lastMove ? { from: { r: prevState.lastMove.from.r, c: prevState.lastMove.from.c }, to: { r: prevState.lastMove.to.r, c: prevState.lastMove.to.c } } : null;
-  halfMoveClock = prevState.halfMoveClock || 0;
-  selected = null; targets = [];
-  boardEl.innerHTML = ''; createGrid();
-  for (var r = 0; r < 8; r++) { for (var c = 0; c < 8; c++) { if (b[r][c]) createPieceNode(b[r][c], r, c); } }
-  render(); persistState();
-  triggerAIIfNeeded();
-});
+var btnUndo = document.getElementById('btn-undo');
+if (btnUndo) {
+    btnUndo.addEventListener('pointerdown', function(e) {
+      e.preventDefault();
+      if (isVsAI && turn === aiSide && !gameOver) return; 
+      if (gameOver) gameOver = false;
+      if (multiJumpPiece) { multiJumpPiece = null; removedDuringTurn = []; } 
+      else { 
+        if (isVsAI && historyStack.length > 2) {
+            historyStack.pop(); historyStack.pop();
+        } else if (!isVsAI && historyStack.length > 1) {
+            historyStack.pop();
+        } else { 
+            showMessage("Start of game"); return; 
+        } 
+      }
+      var prevState = historyStack[historyStack.length - 1];
+      b = cloneBoard(prevState.b); turn = prevState.turn;
+      lastMove = prevState.lastMove ? { from: { r: prevState.lastMove.from.r, c: prevState.lastMove.from.c }, to: { r: prevState.lastMove.to.r, c: prevState.lastMove.to.c } } : null;
+      halfMoveClock = prevState.halfMoveClock || 0;
+      selected = null; targets = [];
+      boardEl.innerHTML = ''; createGrid();
+      for (var r = 0; r < 8; r++) { for (var c = 0; c < 8; c++) { if (b[r][c]) createPieceNode(b[r][c], r, c); } }
+      render(); persistState();
+      triggerAIIfNeeded();
+    });
+}
 
-document.getElementById('btn-menu').addEventListener('pointerdown', function(e) {
-  e.preventDefault(); 
-  if (rulesBox) rulesBox.classList.remove('open'); 
-  if (menuModal) menuModal.classList.add('open');
-});
+var btnMenu = document.getElementById('btn-menu');
+if (btnMenu) {
+    btnMenu.addEventListener('pointerdown', function(e) {
+      e.preventDefault(); 
+      var rBox = document.getElementById('rules-box');
+      if (rBox) rBox.classList.remove('open'); 
+      if (menuModal) menuModal.classList.add('open');
+    });
+}
 
-document.getElementById('btn-resume').addEventListener('pointerdown', function(e) {
-  e.preventDefault(); 
-  if (menuModal) menuModal.classList.remove('open');
-});
+var btnResume = document.getElementById('btn-resume');
+if (btnResume) {
+    btnResume.addEventListener('pointerdown', function(e) {
+      e.preventDefault(); 
+      if (menuModal) menuModal.classList.remove('open');
+    });
+}
 
-document.getElementById('btn-restart').addEventListener('pointerdown', function(e) {
-  e.preventDefault(); 
-  if (menuModal) menuModal.classList.remove('open'); 
-  initGame(true); showMessage("New Game Started");
-});
+var btnRestart = document.getElementById('btn-restart');
+if (btnRestart) {
+    btnRestart.addEventListener('pointerdown', function(e) {
+      e.preventDefault(); 
+      if (menuModal) menuModal.classList.remove('open'); 
+      initGame(true); showMessage("New Game Started");
+    });
+}
 
-document.getElementById('btn-draw').addEventListener('pointerdown', function(e) {
-  e.preventDefault();
-  if (gameOver) return;
-  if (menuModal) menuModal.classList.remove('open');
-  var offeringPlayer = turn === 'w' ? 'Player 1' : (isVsAI ? 'Computer' : 'Player 2');
-  var acceptingPlayer = turn === 'w' ? (isVsAI ? 'Computer' : 'Player 2') : 'Player 1';
-  
-  if (isVsAI) { showMessage("🤖 Computer Refuses Draw!"); return; }
-  if (confirm(offeringPlayer + " offers a draw. Does " + acceptingPlayer + " accept?")) {
-    gameOver = true; showMessage("🤝 Match Drawn!"); playSound('thud'); persistState();
-  }
-});
+var btnDraw = document.getElementById('btn-draw');
+if (btnDraw) {
+    btnDraw.addEventListener('pointerdown', function(e) {
+      e.preventDefault();
+      if (gameOver) return;
+      if (menuModal) menuModal.classList.remove('open');
+      var offeringPlayer = turn === 'w' ? 'Player 1' : (isVsAI ? 'Computer' : 'Player 2');
+      var acceptingPlayer = turn === 'w' ? (isVsAI ? 'Computer' : 'Player 2') : 'Player 1';
+      
+      if (isVsAI) { showMessage("🤖 Computer Refuses Draw!"); return; }
+      if (confirm(offeringPlayer + " offers a draw. Does " + acceptingPlayer + " accept?")) {
+        gameOver = true; showMessage("🤝 Match Drawn!"); playSound('thud'); persistState();
+      }
+    });
+}
 
-document.getElementById('btn-toggle-rules').addEventListener('pointerdown', function(e) {
-  e.preventDefault(); 
-  if (rulesBox) rulesBox.classList.toggle('open');
-});
+var btnToggleRules = document.getElementById('btn-toggle-rules');
+if (btnToggleRules) {
+    btnToggleRules.addEventListener('pointerdown', function(e) {
+      e.preventDefault(); 
+      var rBox = document.getElementById('rules-box');
+      if (rBox) rBox.classList.toggle('open');
+    });
+}
 
 if (menuModal) {
     menuModal.addEventListener('pointerdown', function(e) {
@@ -956,7 +1007,11 @@ if (menuModal) {
 }
 
 var themes = ['theme-wood', 'theme-marble', 'theme-classic'];
-var savedTheme = localStorage.getItem(THEME_KEY) || 'theme-wood';
+var savedTheme = 'theme-wood';
+try {
+    var stored = localStorage.getItem(THEME_KEY);
+    if (stored) savedTheme = stored;
+} catch(e) {}
 document.body.classList.add(savedTheme);
 
 var themeBtns = document.querySelectorAll('.theme-btn');
@@ -968,7 +1023,7 @@ for(var i=0; i<themeBtns.length; i++) {
     this.classList.add('active');
     for (var k=0; k<themes.length; k++) document.body.classList.remove(themes[k]);
     document.body.classList.add(this.dataset.theme);
-    localStorage.setItem(THEME_KEY, this.dataset.theme);
+    try { localStorage.setItem(THEME_KEY, this.dataset.theme); } catch(err) {}
   });
 }
 
@@ -996,7 +1051,7 @@ for(var i=0; i<rulesBtns.length; i++) {
         currentRuleset = this.dataset.rules;
         for (var j=0; j<rulesBtns.length; j++) rulesBtns[j].classList.remove('active');
         this.classList.add('active');
-        localStorage.setItem(RULES_KEY, currentRuleset);
+        try { localStorage.setItem(RULES_KEY, currentRuleset); } catch(err) {}
         if (menuModal) menuModal.classList.remove('open');
         initGame(true);
     }
