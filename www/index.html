@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Russian Checkers Pro</title>
+<title>Checkers Studio Pro</title>
 <style>
   :root {
     --wood-table-1: #5a3218;
@@ -134,8 +134,8 @@
   .menu-btn.resume { background: linear-gradient(180deg, #16a34a 0%, #166534 100%); border-color: #052e16; }
   
   .theme-selector, .mode-selector { display: flex; gap: 10px; justify-content: space-between; margin-top: 6px; }
-  .theme-btn, .mode-btn { flex: 1; padding: 10px; border-radius: 8px; border: 2px solid transparent; background: rgba(0,0,0,0.35); color: #fff; font-weight: bold; cursor: pointer; font-size: 0.85rem; }
-  .theme-btn.active, .mode-btn.active { border-color: #38bdf8; background: rgba(56, 189, 248, 0.15); }
+  .theme-btn, .mode-btn, .rules-btn { flex: 1; padding: 10px; border-radius: 8px; border: 2px solid transparent; background: rgba(0,0,0,0.35); color: #fff; font-weight: bold; cursor: pointer; font-size: 0.85rem; }
+  .theme-btn.active, .mode-btn.active, .rules-btn.active { border-color: #38bdf8; background: rgba(56, 189, 248, 0.15); }
   
   .rules-box { background: rgba(20, 10, 4, 0.75); border: 1px solid #734422; border-radius: 12px; padding: 12px 14px; font-size: 0.85rem; line-height: 1.45; color: #f3e8d5; display: none; margin-top: 8px; }
   body.theme-marble .rules-box, body.theme-classic .rules-box { background: #0f172a; border-color: #334155; }
@@ -224,10 +224,16 @@
     <button class="menu-btn draw" id="btn-draw">🤝 Offer Draw</button>
     <button class="menu-btn restart" id="btn-restart">↻ Restart Game</button>
     
+    <h3 style="color:#fff; margin: 10px 0 0 0; font-size:1rem; text-align:center;">Game Rules</h3>
+    <div class="mode-selector">
+      <button class="rules-btn active" data-rules="russian">🇷🇺 Russian</button>
+      <button class="rules-btn" data-rules="indian">🇮🇳 Indian</button>
+    </div>
+
     <h3 style="color:#fff; margin: 10px 0 0 0; font-size:1rem; text-align:center;">Game Mode</h3>
     <div class="mode-selector">
       <button class="mode-btn active" data-mode="1">🤖 1 Player (Vs AI)</button>
-      <button class="mode-btn" data-mode="2">👥 2 Players (Local)</button>
+      <button class="mode-btn" data-mode="2">👥 2 Players</button>
     </div>
 
     <h3 style="color:#fff; margin: 10px 0 0 0; font-size:1rem; text-align:center;">Board Theme</h3>
@@ -236,25 +242,54 @@
       <button class="theme-btn" data-theme="theme-marble">Marble</button>
       <button class="theme-btn" data-theme="theme-classic">Classic</button>
     </div>
-    
-    <button class="menu-btn" id="btn-toggle-rules" style="margin-top: 10px;">📖 Game Rules</button>
-
-    <div class="rules-box" id="rules-box">
-      <b>Official Shashki Rules:</b>
-      <ul>
-        <li>Move diagonally forward 1 step. Capture both forward & backward.</li>
-        <li><b>Mandatory Capture:</b> If a jump is available, you must take it.</li>
-        <li><b>Kings (Damka):</b> Move & jump across any distance along open diagonals.</li>
-        <li><b>Mid-Jump Promotion:</b> Reaching the top/bottom row mid-capture crowns your piece immediately.</li>
-        <li><b>Automatic Draw:</b> Game ends in a tie after 15 moves with only Kings moving and no captures.</li>
-      </ul>
-    </div>
   </div>
 </div>
 
 <script>
 const SAVE_KEY = 'checkers_save_state';
 const THEME_KEY = 'checkers_theme';
+const RULES_KEY = 'checkers_rules';
+
+// Audio Context
+let audioCtx = null;
+function initAudio() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+window.addEventListener('pointerdown', initAudio, {once: true});
+
+function playSound(type) {
+  if (!audioCtx) return;
+  const t = audioCtx.currentTime;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  
+  if (type === 'clack') {
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(600, t);
+    osc.frequency.exponentialRampToValueAtTime(100, t + 0.05);
+    gain.gain.setValueAtTime(0.4, t);
+    gain.gain.exponentialRampToValueAtTime(0.01, t + 0.05);
+    osc.start(t);
+    osc.stop(t + 0.05);
+  } else if (type === 'thud') {
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(150, t);
+    osc.frequency.exponentialRampToValueAtTime(40, t + 0.15);
+    gain.gain.setValueAtTime(0.7, t);
+    gain.gain.exponentialRampToValueAtTime(0.01, t + 0.15);
+    osc.start(t);
+    osc.stop(t + 0.15);
+  }
+}
+
+function triggerHaptic() {
+  if (navigator.vibrate) navigator.vibrate(10);
+}
 
 const boardEl = document.getElementById('board');
 const panelW = document.getElementById('panel-w');
@@ -267,7 +302,6 @@ const countB = document.getElementById('count-b');
 const msgOverlay = document.getElementById('msg-overlay');
 const menuModal = document.getElementById('menu-modal');
 const menuStatus = document.getElementById('menu-status');
-const rulesBox = document.getElementById('rules-box');
 
 const DIRS = [[-1,-1], [-1,1], [1,-1], [1,1]];
 
@@ -317,6 +351,7 @@ let halfMoveClock = 0;
 let isVsAI = true;
 let aiSide = 'b';
 let aiMoveTimeout = null;
+let currentRuleset = localStorage.getItem(RULES_KEY) || 'russian'; // 'russian' or 'indian'
 
 function createGrid() {
   boardEl.innerHTML = '';
@@ -344,7 +379,7 @@ function persistState() {
     b: b, turn: turn, lastMove: lastMove, historyStack: historyStack, 
     gameOver: gameOver, multiJumpPiece: multiJumpPiece, 
     removedDuringTurn: removedDuringTurn, pieceIdCounter: pieceIdCounter, 
-    halfMoveClock: halfMoveClock, isVsAI: isVsAI
+    halfMoveClock: halfMoveClock, isVsAI: isVsAI, currentRuleset: currentRuleset
   }));
 }
 
@@ -354,10 +389,7 @@ function saveState() {
     lm = { from: { r: lastMove.from.r, c: lastMove.from.c }, to: { r: lastMove.to.r, c: lastMove.to.c } };
   }
   historyStack.push({
-    b: cloneBoard(b),
-    turn: turn,
-    lastMove: lm,
-    halfMoveClock: halfMoveClock
+    b: cloneBoard(b), turn: turn, lastMove: lm, halfMoveClock: halfMoveClock
   });
   persistState();
 }
@@ -386,7 +418,8 @@ function loadState() {
         gameOver = parsed.gameOver; multiJumpPiece = parsed.multiJumpPiece; removedDuringTurn = parsed.removedDuringTurn || [];
         pieceIdCounter = parsed.pieceIdCounter || 100; halfMoveClock = parsed.halfMoveClock || 0;
         isVsAI = parsed.isVsAI !== undefined ? parsed.isVsAI : true;
-        updateModeUI();
+        currentRuleset = parsed.currentRuleset || 'russian';
+        updateMenuUI();
         return true;
       }
     } catch (e) {}
@@ -394,14 +427,13 @@ function loadState() {
   return false;
 }
 
-function updateModeUI() {
+function updateMenuUI() {
   titleB.textContent = isVsAI ? "Computer (Black)" : "Player 2 (Black)";
   document.querySelectorAll('.mode-btn').forEach(btn => {
-    if (btn.dataset.mode === (isVsAI ? '1' : '2')) {
-        btn.classList.add('active');
-    } else {
-        btn.classList.remove('active');
-    }
+    if (btn.dataset.mode === (isVsAI ? '1' : '2')) btn.classList.add('active'); else btn.classList.remove('active');
+  });
+  document.querySelectorAll('.rules-btn').forEach(btn => {
+    if (btn.dataset.rules === currentRuleset) btn.classList.add('active'); else btn.classList.remove('active');
   });
 }
 
@@ -412,7 +444,7 @@ function initGame(forceNew = false) {
     pieceIdCounter = 0; halfMoveClock = 0;
     generateBoard(); turn = 'w'; selected = null; targets = []; multiJumpPiece = null;
     removedDuringTurn = []; lastMove = null; historyStack = []; gameOver = false;
-    updateModeUI();
+    updateMenuUI();
     saveState();
   } else {
     selected = null; targets = [];
@@ -443,8 +475,16 @@ function inBounds(r, c) { return r >= 0 && r < 8 && c >= 0 && c < 8; }
 function getCaptures(r, c, p, boardState, ghosts) {
   const moves = [];
   if (!p) return moves;
-  if (!p.king) {
+  
+  const isIndianKing = (currentRuleset === 'indian' && p.king);
+
+  if (!p.king || isIndianKing) {
     for (const [dr, dc] of DIRS) {
+      if (currentRuleset === 'indian' && !p.king) {
+        const forward = (p.side === 'w') ? -1 : 1;
+        if (dr !== forward) continue; // Indian drafts men cannot capture backwards
+      }
+      
       const mr = r + dr, mc = c + dc; const tr = r + 2 * dr, tc = c + 2 * dc;
       if (inBounds(tr, tc) && inBounds(mr, mc)) {
         const midP = boardState[mr][mc];
@@ -456,6 +496,7 @@ function getCaptures(r, c, p, boardState, ghosts) {
       }
     }
   } else {
+    // Russian Flying King
     for (const [dr, dc] of DIRS) {
       let step = 1, enemy = null;
       while (inBounds(r + step * dr, c + step * dc)) {
@@ -479,7 +520,11 @@ function getCaptures(r, c, p, boardState, ghosts) {
 function getSimpleMoves(r, c, p) {
   const moves = [];
   if (!p) return moves;
-  if (p.king) {
+
+  const isIndianKing = (currentRuleset === 'indian' && p.king);
+
+  if (p.king && !isIndianKing) {
+    // Russian Flying King
     for (const [dr, dc] of DIRS) {
       let step = 1;
       while (inBounds(r + step * dr, c + step * dc) && !b[r + step * dr][c + step * dc]) {
@@ -487,9 +532,10 @@ function getSimpleMoves(r, c, p) {
       }
     }
   } else {
-    const forward = p.side === 'w' ? -1 : 1;
-    for (const dc of [-1, 1]) {
-      const tr = r + forward, tc = c + dc;
+    // Normal Men (Both Rulesets) + Indian Kings (1 Step)
+    const directions = (p.king) ? DIRS : (p.side === 'w' ? [[-1,-1], [-1,1]] : [[1,-1], [1,1]]);
+    for (const [dr, dc] of directions) {
+      const tr = r + dr, tc = c + dc;
       if (inBounds(tr, tc) && !b[tr][tc]) moves.push({ r: tr, c: tc });
     }
   }
@@ -564,6 +610,9 @@ function executeMove(fr, fc, target, fromAI = false) {
   const p = b[fr][fc];
   b[target.r][target.c] = p; b[fr][fc] = null;
   
+  playSound('clack');
+  triggerHaptic();
+  
   if (target.cap || !p.king) {
     halfMoveClock = 0;
   } else {
@@ -571,7 +620,10 @@ function executeMove(fr, fc, target, fromAI = false) {
   }
 
   if (!p.king) {
-    if ((p.side === 'w' && target.r === 0) || (p.side === 'b' && target.r === 7)) p.king = true;
+    if ((p.side === 'w' && target.r === 0) || (p.side === 'b' && target.r === 7)) {
+      p.king = true;
+      playSound('thud');
+    }
   }
 
   if (target.cap) {
@@ -610,6 +662,7 @@ function checkGameOver() {
     gameOver = true;
     const winner = turn === 'w' ? (isVsAI ? 'Computer (Black)' : 'Player 2 (Black)') : 'Player 1 (White)';
     showMessage('🏆 ' + winner + ' Wins!');
+    playSound('thud');
     persistState();
     return;
   }
@@ -617,6 +670,7 @@ function checkGameOver() {
   if (halfMoveClock >= 30) {
     gameOver = true;
     showMessage("🤝 Draw (15 Move Rule)");
+    playSound('thud');
     persistState();
   }
 }
@@ -829,7 +883,7 @@ document.getElementById('btn-draw').addEventListener('pointerdown', (e) => {
   
   if (isVsAI) { showMessage("🤖 Computer Refuses Draw!"); return; }
   if (confirm(offeringPlayer + ' offers a draw.\n\nDoes ' + acceptingPlayer + ' accept?')) {
-    gameOver = true; showMessage("🤝 Match Drawn!"); persistState();
+    gameOver = true; showMessage("🤝 Match Drawn!"); playSound('thud'); persistState();
   }
 });
 document.getElementById('btn-toggle-rules').addEventListener('pointerdown', (e) => {
@@ -869,7 +923,22 @@ document.querySelectorAll('.mode-btn').forEach(btn => {
   });
 });
 
+document.querySelectorAll('.rules-btn').forEach(btn => {
+  btn.addEventListener('pointerdown', (e) => {
+    e.preventDefault();
+    if (btn.classList.contains('active')) return; 
+    if (confirm("Switching rules will restart the current match. Continue?")) {
+        currentRuleset = btn.dataset.rules;
+        document.querySelectorAll('.rules-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        localStorage.setItem(RULES_KEY, currentRuleset);
+        menuModal.classList.remove('open');
+        initGame(true);
+    }
+  });
+});
+
 initGame(false);
 </script>
 </body>
-</html>
+  </html>
