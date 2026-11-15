@@ -50,35 +50,36 @@
   }
   body.theme-marble { background-image: radial-gradient(circle at 50% 50%, #1e293b 0%, #020617 100%); }
 
-  .game-layout { display: flex; flex-direction: column; justify-content: space-between; align-items: center; width: 100%; height: 100%; padding: env(safe-area-inset-top, 12px) 10px env(safe-area-inset-bottom, 12px); max-width: 780px; margin: 0 auto; }
-  .player-plaque { display: flex; align-items: center; justify-content: space-between; width: 100%; max-width: 92vmin; padding: 8px 16px; border-radius: 16px; background: linear-gradient(180deg, rgba(42,22,10,0.75) 0%, rgba(26,13,5,0.88) 100%); border: 2px solid #734422; box-shadow: 0 6px 14px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,220,180,0.2); transition: all 0.2s ease; }
+  .game-layout { display: flex; flex-direction: column; justify-content: space-between; align-items: center; width: 100%; height: 100%; padding: env(safe-area-inset-top, 8px) 4px env(safe-area-inset-bottom, 8px); margin: 0 auto; }
+  
+  .player-plaque { display: flex; align-items: center; justify-content: space-between; width: 100%; max-width: 96vmin; padding: 6px 12px; border-radius: 12px; background: linear-gradient(180deg, rgba(42,22,10,0.75) 0%, rgba(26,13,5,0.88) 100%); border: 2px solid #734422; box-shadow: 0 4px 10px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,220,180,0.2); transition: all 0.2s ease; margin-bottom: 2px; }
   body.theme-marble .player-plaque, body.theme-classic .player-plaque { background: rgba(15,23,42,0.8); border-color: #334155; }
-  .player-plaque.active-turn { border-color: #fbbf24; box-shadow: 0 6px 18px rgba(0,0,0,0.6), 0 0 14px rgba(251, 191, 36, 0.45), inset 0 1px 2px rgba(255,255,255,0.35); background: linear-gradient(180deg, rgba(68,36,15,0.88) 0%, rgba(36,18,7,0.95) 100%); }
+  .player-plaque.active-turn { border-color: #fbbf24; box-shadow: 0 4px 14px rgba(0,0,0,0.6), 0 0 10px rgba(251, 191, 36, 0.45), inset 0 1px 2px rgba(255,255,255,0.35); background: linear-gradient(180deg, rgba(68,36,15,0.88) 0%, rgba(36,18,7,0.95) 100%); }
   body.theme-marble .player-plaque.active-turn, body.theme-classic .player-plaque.active-turn { background: rgba(30,41,59,0.9); }
   
-  .avatar-group { display: flex; align-items: center; gap: 14px; }
-  .avatar-ring { width: 52px; height: 52px; border-radius: 50%; padding: 3px; position: relative; box-shadow: 0 4px 8px rgba(0,0,0,0.65); flex-shrink: 0; }
+  .avatar-group { display: flex; align-items: center; gap: 10px; }
+  .avatar-ring { width: 44px; height: 44px; border-radius: 50%; padding: 2px; position: relative; box-shadow: 0 3px 6px rgba(0,0,0,0.65); flex-shrink: 0; }
   .avatar-ring.white-ring { background: linear-gradient(135deg, #ffffff 0%, #d8c8b4 50%, #8c7660 100%); border: 2px solid #f8fafc; }
   .avatar-ring.black-ring { background: linear-gradient(135deg, #52525b 0%, #27272a 50%, #09090b 100%); border: 2px solid #52525b; }
   .avatar-inner { width: 100%; height: 100%; border-radius: 50%; background: radial-gradient(circle at 50% 35%, #64748b, #1e293b); overflow: hidden; display: flex; align-items: center; justify-content: center; }
   
-  .turn-clock { position: absolute; bottom: -3px; right: -4px; width: 22px; height: 22px; background: linear-gradient(135deg, #fb923c, #ea580c); border: 2px solid #fff; border-radius: 50%; display: none; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.6); }
+  .turn-clock { position: absolute; bottom: -3px; right: -4px; width: 18px; height: 18px; background: linear-gradient(135deg, #fb923c, #ea580c); border: 2px solid #fff; border-radius: 50%; display: none; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.6); }
   .player-plaque.active-turn .turn-clock { display: flex; animation: pulse-clock 1.2s infinite alternate ease-in-out; }
   @keyframes pulse-clock { 0% { transform: scale(0.95); } 100% { transform: scale(1.1); } }
   
   .player-details { display: flex; flex-direction: column; }
-  .player-title { font-size: 1.25rem; font-weight: 800; color: #fff8eb; text-shadow: 0 2px 3px rgba(0,0,0,0.8); letter-spacing: 0.01em; }
-  .player-sub { font-size: 0.8rem; font-weight: 600; color: #d6b894; }
+  .player-title { font-size: 1.1rem; font-weight: 800; color: #fff8eb; text-shadow: 0 2px 3px rgba(0,0,0,0.8); letter-spacing: 0.01em; margin-bottom: -2px; }
+  .player-sub { font-size: 0.75rem; font-weight: 600; color: #d6b894; }
   body.theme-marble .player-sub, body.theme-classic .player-sub { color: #94a3b8; }
   .player-plaque.active-turn .player-sub { color: #fde047; }
   
-  .score-pill { display: flex; align-items: center; gap: 8px; background: rgba(15, 8, 3, 0.65); border: 1px solid #633a1c; padding: 6px 12px; border-radius: 999px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.6); }
+  .score-pill { display: flex; align-items: center; gap: 6px; background: rgba(15, 8, 3, 0.65); border: 1px solid #633a1c; padding: 4px 10px; border-radius: 999px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.6); }
   body.theme-marble .score-pill, body.theme-classic .score-pill { border-color: #334155; }
-  .score-icon { width: 24px; height: 24px; }
-  .score-num { font-size: 1.2rem; font-weight: 800; color: #fff; min-width: 22px; text-align: center; }
+  .score-icon { width: 20px; height: 20px; }
+  .score-num { font-size: 1.1rem; font-weight: 800; color: #fff; min-width: 20px; text-align: center; }
   
-  .board-frame { width: 100%; max-width: 92vmin; max-height: 92vmin; aspect-ratio: 1 / 1; background: var(--frame-outer); border: 3px solid var(--frame-border); border-radius: 10px; box-shadow: 0 20px 40px rgba(0,0,0,0.8), inset 0 2px 2px rgba(255,210,160,0.22), inset 0 -2px 3px rgba(0,0,0,0.8); display: grid; grid-template-columns: 22px 1fr 22px; grid-template-rows: 22px 1fr 22px; flex-shrink: 0; transition: background 0.3s ease, border-color 0.3s ease; }
-  .coord-bar-h, .coord-bar-v { display: grid; align-items: center; justify-items: center; font-size: 0.72rem; font-weight: 800; color: var(--text-coord); text-shadow: 0 1px 1px #000; }
+  .board-frame { width: 100%; max-width: 98vmin; max-height: 98vmin; aspect-ratio: 1 / 1; background: var(--frame-outer); border: 3px solid var(--frame-border); border-radius: 8px; box-shadow: 0 15px 35px rgba(0,0,0,0.8), inset 0 2px 2px rgba(255,210,160,0.22), inset 0 -2px 3px rgba(0,0,0,0.8); display: grid; grid-template-columns: 16px 1fr 16px; grid-template-rows: 16px 1fr 16px; flex-shrink: 0; transition: background 0.3s ease, border-color 0.3s ease; margin: 4px 0; }
+  .coord-bar-h, .coord-bar-v { display: grid; align-items: center; justify-items: center; font-size: 0.65rem; font-weight: 800; color: var(--text-coord); text-shadow: 0 1px 1px #000; }
   .coord-bar-h { grid-template-columns: repeat(8, 1fr); }
   .coord-bar-v { grid-template-rows: repeat(8, 1fr); }
   
@@ -102,13 +103,13 @@
   .cell.target-cap::before { width: 46%; height: 46%; background: radial-gradient(circle, rgba(254,202,202,0.2) 40%, rgba(239,68,68,0.85) 100%); border: 3px solid #fef08a; box-shadow: 0 0 10px #ef4444; }
   
   /* FLUID ANIMATION PIECES */
-  .piece { position: absolute; width: 12.5%; height: 12.5%; padding: 1%; display: flex; align-items: center; justify-content: center; z-index: 15; transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.2s, filter 0.2s; pointer-events: none; left: 0; top: 0; }
-  .piece svg { width: 90%; height: 90%; display: block; overflow: visible; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.72)); transition: filter 0.15s, transform 0.15s; }
+  .piece { position: absolute; width: 12.5%; height: 12.5%; padding: 0.5%; display: flex; align-items: center; justify-content: center; z-index: 15; transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.2s, filter 0.2s; pointer-events: none; left: 0; top: 0; }
+  .piece svg { width: 95%; height: 95%; display: block; overflow: visible; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.72)); transition: filter 0.15s, transform 0.15s; }
   .piece.selected svg { transform: scale(1.08) translateY(-3px); filter: drop-shadow(0 10px 12px rgba(0,0,0,0.85)); }
   .piece.ghost { opacity: 0; transform: scale(0); }
   
-  .bottom-shelf { width: 100%; max-width: 92vmin; display: flex; gap: 18px; padding: 6px 4px 2px 4px; }
-  .wood-btn { flex: 1; height: 56px; border-radius: 14px; background: linear-gradient(180deg, #9c5c30 0%, #6e3b17 55%, #4f280d 100%); border: 2px solid #291305; box-shadow: 0 6px 10px rgba(0,0,0,0.65), inset 0 2px 2px rgba(255, 215, 175, 0.45), inset 0 -3px 4px rgba(0, 0, 0, 0.6); color: #f8e8d4; font-size: 1.15rem; font-weight: 800; letter-spacing: 0.02em; text-shadow: 0 2px 2px rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; transition: transform 0.08s ease, filter 0.1s ease; }
+  .bottom-shelf { width: 100%; max-width: 96vmin; display: flex; gap: 14px; padding: 4px 2px 2px 2px; margin-top: 2px; }
+  .wood-btn { flex: 1; height: 50px; border-radius: 12px; background: linear-gradient(180deg, #9c5c30 0%, #6e3b17 55%, #4f280d 100%); border: 2px solid #291305; box-shadow: 0 6px 10px rgba(0,0,0,0.65), inset 0 2px 2px rgba(255, 215, 175, 0.45), inset 0 -3px 4px rgba(0, 0, 0, 0.6); color: #f8e8d4; font-size: 1.05rem; font-weight: 800; letter-spacing: 0.02em; text-shadow: 0 2px 2px rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; transition: transform 0.08s ease, filter 0.1s ease; }
   body.theme-marble .wood-btn, body.theme-classic .wood-btn { background: linear-gradient(180deg, #475569 0%, #1e293b 100%); border-color: #0f172a; }
   .wood-btn:active { transform: translateY(2px) scale(0.98); box-shadow: 0 2px 4px rgba(0,0,0,0.6), inset 0 2px 4px rgba(0,0,0,0.6); }
   
@@ -119,7 +120,7 @@
   .modal-backdrop { position: fixed; inset: 0; background: rgba(12, 6, 2, 0.82); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); display: flex; align-items: center; justify-content: center; padding: 20px; z-index: 200; opacity: 0; pointer-events: none; transition: opacity 0.2s ease; }
   body.theme-marble .modal-backdrop, body.theme-classic .modal-backdrop { background: rgba(2,6,23,0.82); }
   .modal-backdrop.open { opacity: 1; pointer-events: auto; }
-  .menu-card { background: linear-gradient(180deg, #4f2b13 0%, #2e1709 100%); border: 3px solid #8c5327; border-radius: 20px; padding: 24px; width: 100%; max-width: 380px; box-shadow: 0 22px 50px rgba(0,0,0,0.85), inset 0 2px 2px rgba(255,220,180,0.25); display: flex; flex-direction: column; gap: 14px; max-height: 90vh; overflow-y: auto; }
+  .menu-card { background: linear-gradient(180deg, #4f2b13 0%, #2e1709 100%); border: 3px solid #8c5327; border-radius: 20px; padding: 24px; width: 100%; max-width: 440px; box-shadow: 0 22px 50px rgba(0,0,0,0.85), inset 0 2px 2px rgba(255,220,180,0.25); display: flex; flex-direction: column; gap: 14px; max-height: 90vh; overflow-y: auto; }
   body.theme-marble .menu-card, body.theme-classic .menu-card { background: #1e293b; border-color: #334155; box-shadow: 0 20px 45px rgba(0,0,0,0.85); }
   
   .menu-header { font-size: 1.5rem; font-weight: 900; text-align: center; margin: 0; color: #fde68a; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
@@ -134,21 +135,24 @@
   .menu-btn.resume { background: linear-gradient(180deg, #16a34a 0%, #166534 100%); border-color: #052e16; }
   
   .theme-selector, .mode-selector { display: flex; gap: 10px; justify-content: space-between; margin-top: 6px; }
-  .theme-btn, .mode-btn, .rules-btn { flex: 1; padding: 10px; border-radius: 8px; border: 2px solid transparent; background: rgba(0,0,0,0.35); color: #fff; font-weight: bold; cursor: pointer; font-size: 0.85rem; }
-  .theme-btn.active, .mode-btn.active, .rules-btn.active { border-color: #38bdf8; background: rgba(56, 189, 248, 0.15); }
-  
-  .rules-box { background: rgba(20, 10, 4, 0.75); border: 1px solid #734422; border-radius: 12px; padding: 12px 14px; font-size: 0.85rem; line-height: 1.45; color: #f3e8d5; display: none; margin-top: 8px; }
-  body.theme-marble .rules-box, body.theme-classic .rules-box { background: #0f172a; border-color: #334155; }
-  .rules-box.open { display: block; }
-  .rules-box ul { margin: 6px 0 0 0; padding-left: 18px; }
-  .rules-box li { margin-bottom: 4px; }
+  .theme-btn, .mode-btn, .rules-btn, .diff-btn { flex: 1; padding: 10px; border-radius: 8px; border: 2px solid transparent; background: rgba(0,0,0,0.35); color: #fff; font-weight: bold; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; text-align: center; }
+  .theme-btn.active, .mode-btn.active, .rules-btn.active, .diff-btn.active { border-color: #38bdf8; background: rgba(56, 189, 248, 0.15); }
+
+  .diff-selector { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 6px; }
+  .diff-btn[data-diff="6"] { grid-column: span 3; background: linear-gradient(180deg, rgba(76, 29, 149, 0.7) 0%, rgba(46, 16, 101, 0.9) 100%); border-color: #8b5cf6; color: #ddd6fe; font-size: 1rem; padding: 12px; }
+  .diff-btn[data-diff="6"].active { background: linear-gradient(180deg, rgba(109, 40, 217, 0.9) 0%, rgba(76, 29, 149, 1) 100%); border-color: #c4b5fd; color: #fff; box-shadow: 0 0 15px rgba(139, 92, 246, 0.8); }
+
+  /* Overlay for AI Thinking */
+  .thinking-overlay { position: fixed; inset: 0; background: transparent; z-index: 100; display: none; }
+  .thinking-overlay.active { display: block; }
   
   @media (orientation: landscape) {
-    .game-layout { flex-direction: row; padding: env(safe-area-inset-top, 12px) env(safe-area-inset-right, 24px) env(safe-area-inset-bottom, 12px) env(safe-area-inset-left, 24px); max-width: 1200px; }
-    .board-frame { max-height: 92vh; max-width: 92vh; margin: 0 20px; }
-    .player-plaque { flex-direction: column; width: 180px; height: auto; gap: 12px; text-align: center; padding: 14px; }
+    .game-layout { flex-direction: row; padding: env(safe-area-inset-top, 12px) env(safe-area-inset-right, 24px) env(safe-area-inset-bottom, 12px) env(safe-area-inset-left, 24px); justify-content: center; gap: 40px; }
+    .board-frame { max-height: 94vh; max-width: 94vh; margin: 0; }
+    .side-panel { display: flex; flex-direction: column; gap: 20px; height: 94vh; justify-content: space-between; }
+    .player-plaque { flex-direction: column; width: 180px; height: auto; gap: 12px; text-align: center; padding: 14px; margin-bottom: 0; }
     .avatar-group { flex-direction: column; }
-    .bottom-shelf { flex-direction: column; width: 180px; }
+    .bottom-shelf { flex-direction: column; width: 180px; margin-top: 0; }
   }
 </style>
 </head>
@@ -156,30 +160,37 @@
 
 <svg width="0" height="0" style="position:absolute; width:0; height:0; overflow:hidden;" aria-hidden="true">
   <defs>
-    <linearGradient id="wOuterRim" x1="15%" y1="10%" x2="85%" y2="90%"><stop offset="0%" stop-color="#ffffff"/><stop offset="50%" stop-color="#e6dec8"/><stop offset="85%" stop-color="#b8a68e"/><stop offset="100%" stop-color="#8a765d"/></linearGradient>
-    <linearGradient id="wGrooveDark" x1="15%" y1="15%" x2="85%" y2="85%"><stop offset="0%" stop-color="#9e8b72"/><stop offset="50%" stop-color="#cfc2ae"/><stop offset="100%" stop-color="#ffffff"/></linearGradient>
-    <radialGradient id="wCenterDomed" cx="35%" cy="30%" r="70%"><stop offset="0%" stop-color="#ffffff"/><stop offset="55%" stop-color="#ede5d5"/><stop offset="100%" stop-color="#b8a58b"/></radialGradient>
-    <linearGradient id="bOuterRim" x1="15%" y1="10%" x2="85%" y2="90%"><stop offset="0%" stop-color="#64748b"/><stop offset="35%" stop-color="#27272a"/><stop offset="75%" stop-color="#09090b"/><stop offset="100%" stop-color="#000000"/></linearGradient>
-    <linearGradient id="bGrooveDark" x1="15%" y1="15%" x2="85%" y2="85%"><stop offset="0%" stop-color="#000000"/><stop offset="55%" stop-color="#18181b"/><stop offset="100%" stop-color="#52525b"/></linearGradient>
-    <radialGradient id="bCenterDomed" cx="35%" cy="30%" r="70%"><stop offset="0%" stop-color="#52525b"/><stop offset="50%" stop-color="#18181b"/><stop offset="100%" stop-color="#09090b"/></radialGradient>
+    <!-- Brighter White Pieces -->
+    <linearGradient id="wOuterRim" x1="15%" y1="10%" x2="85%" y2="90%"><stop offset="0%" stop-color="#ffffff"/><stop offset="50%" stop-color="#f8f2e6"/><stop offset="85%" stop-color="#d4c5b0"/><stop offset="100%" stop-color="#a8957c"/></linearGradient>
+    <linearGradient id="wGrooveDark" x1="15%" y1="15%" x2="85%" y2="85%"><stop offset="0%" stop-color="#bfaf99"/><stop offset="50%" stop-color="#e6dacc"/><stop offset="100%" stop-color="#ffffff"/></linearGradient>
+    <radialGradient id="wCenterDomed" cx="35%" cy="30%" r="70%"><stop offset="0%" stop-color="#ffffff"/><stop offset="55%" stop-color="#fdf9f2"/><stop offset="100%" stop-color="#d4c5b0"/></radialGradient>
+    
+    <!-- Darker, Higher Contrast Black Pieces -->
+    <linearGradient id="bOuterRim" x1="15%" y1="10%" x2="85%" y2="90%"><stop offset="0%" stop-color="#475569"/><stop offset="35%" stop-color="#18181b"/><stop offset="75%" stop-color="#000000"/><stop offset="100%" stop-color="#000000"/></linearGradient>
+    <linearGradient id="bGrooveDark" x1="15%" y1="15%" x2="85%" y2="85%"><stop offset="0%" stop-color="#000000"/><stop offset="55%" stop-color="#09090b"/><stop offset="100%" stop-color="#3f3f46"/></linearGradient>
+    <radialGradient id="bCenterDomed" cx="35%" cy="30%" r="70%"><stop offset="0%" stop-color="#3f3f46"/><stop offset="50%" stop-color="#09090b"/><stop offset="100%" stop-color="#000000"/></radialGradient>
+    
     <linearGradient id="crownGold" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fef08a"/><stop offset="50%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#b45309"/></linearGradient>
   </defs>
 </svg>
 
 <div class="game-layout">
-  <div class="player-plaque" id="panel-b">
-    <div class="avatar-group">
-      <div class="avatar-ring black-ring">
-        <div class="avatar-inner"><svg viewBox="0 0 64 64" width="44" height="44"><circle cx="32" cy="24" r="12" fill="#fbd38d"/><path d="M20 20c0-8 10-12 20-8 4 2 4 8 4 8s-6-4-12-2-12 2-12 2z" fill="#78350f"/><path d="M12 58c2-14 12-20 20-20s18 6 20 20" fill="#38bdf8"/></svg></div>
-        <div class="turn-clock"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#fff" stroke-width="2.5"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg></div>
-      </div>
-      <div class="player-details">
-        <span class="player-title" id="title-b">Player 2</span>
-        <span class="player-sub" id="sub-b">Waiting...</span>
-      </div>
-    </div>
-    <div class="score-pill">
-      <div class="score-icon" id="mini-b"></div><span class="score-num" id="count-b">12</span>
+  
+  <div class="side-panel" id="panel-left">
+    <div class="player-plaque" id="panel-b">
+        <div class="avatar-group">
+        <div class="avatar-ring black-ring">
+            <div class="avatar-inner"><svg viewBox="0 0 64 64" width="36" height="36"><circle cx="32" cy="24" r="12" fill="#fbd38d"/><path d="M20 20c0-8 10-12 20-8 4 2 4 8 4 8s-6-4-12-2-12 2-12 2z" fill="#78350f"/><path d="M12 58c2-14 12-20 20-20s18 6 20 20" fill="#38bdf8"/></svg></div>
+            <div class="turn-clock"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#fff" stroke-width="2.5"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg></div>
+        </div>
+        <div class="player-details">
+            <span class="player-title" id="title-b">Player 2</span>
+            <span class="player-sub" id="sub-b">Waiting...</span>
+        </div>
+        </div>
+        <div class="score-pill">
+        <div class="score-icon" id="mini-b"></div><span class="score-num" id="count-b">12</span>
+        </div>
     </div>
   </div>
 
@@ -191,29 +202,33 @@
     <div></div><div class="coord-bar-h"><span>A</span><span>B</span><span>C</span><span>D</span><span>E</span><span>F</span><span>G</span><span>H</span></div><div></div>
   </div>
 
-  <div class="player-plaque active-turn" id="panel-w">
-    <div class="avatar-group">
-      <div class="avatar-ring white-ring">
-        <div class="avatar-inner"><svg viewBox="0 0 64 64" width="44" height="44"><circle cx="32" cy="24" r="12" fill="#fbd38d"/><path d="M20 20c0-8 10-12 20-8 4 2 4 8 4 8s-6-4-12-2-12 2-12 2z" fill="#b45309"/><path d="M12 58c2-14 12-20 20-20s18 6 20 20" fill="#f59e0b"/></svg></div>
-        <div class="turn-clock"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#fff" stroke-width="2.5"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg></div>
-      </div>
-      <div class="player-details">
-        <span class="player-title">Player 1</span>
-        <span class="player-sub" id="sub-w">Your Turn</span>
-      </div>
+  <div class="side-panel" id="panel-right">
+    <div class="player-plaque active-turn" id="panel-w">
+        <div class="avatar-group">
+        <div class="avatar-ring white-ring">
+            <div class="avatar-inner"><svg viewBox="0 0 64 64" width="36" height="36"><circle cx="32" cy="24" r="12" fill="#fbd38d"/><path d="M20 20c0-8 10-12 20-8 4 2 4 8 4 8s-6-4-12-2-12 2-12 2z" fill="#b45309"/><path d="M12 58c2-14 12-20 20-20s18 6 20 20" fill="#f59e0b"/></svg></div>
+            <div class="turn-clock"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#fff" stroke-width="2.5"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg></div>
+        </div>
+        <div class="player-details">
+            <span class="player-title">Player 1</span>
+            <span class="player-sub" id="sub-w">Your Turn</span>
+        </div>
+        </div>
+        <div class="score-pill">
+        <div class="score-icon" id="mini-w"></div><span class="score-num" id="count-w">12</span>
+        </div>
     </div>
-    <div class="score-pill">
-      <div class="score-icon" id="mini-w"></div><span class="score-num" id="count-w">12</span>
+
+    <div class="bottom-shelf">
+        <button class="wood-btn" id="btn-undo"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg> Back</button>
+        <button class="wood-btn" id="btn-menu"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg> Menu</button>
     </div>
   </div>
 
-  <div class="bottom-shelf">
-    <button class="wood-btn" id="btn-undo"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg> Back</button>
-    <button class="wood-btn" id="btn-menu"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg> Menu</button>
-  </div>
 </div>
 
 <div class="message-overlay" id="msg-overlay"></div>
+<div class="thinking-overlay" id="thinking-overlay"></div>
 
 <div class="modal-backdrop" id="menu-modal">
   <div class="menu-card">
@@ -221,9 +236,18 @@
     <div class="menu-sub" id="menu-status">Player 1's Turn</div>
 
     <button class="menu-btn resume" id="btn-resume">▶ Resume Game</button>
-    <button class="menu-btn draw" id="btn-draw">🤝 Offer Draw</button>
     <button class="menu-btn restart" id="btn-restart">↻ Restart Game</button>
     
+    <h3 style="color:#fff; margin: 10px 0 0 0; font-size:1rem; text-align:center;">AI Difficulty</h3>
+    <div class="diff-selector">
+      <button class="diff-btn" data-diff="1">Easy</button>
+      <button class="diff-btn" data-diff="2">Med</button>
+      <button class="diff-btn" data-diff="3">Hard</button>
+      <button class="diff-btn" data-diff="4">Expert</button>
+      <button class="diff-btn" data-diff="5">God Tier</button>
+      <button class="diff-btn active" data-diff="6">Grandmaster 🧠</button>
+    </div>
+
     <h3 style="color:#fff; margin: 10px 0 0 0; font-size:1rem; text-align:center;">Game Rules</h3>
     <div class="mode-selector">
       <button class="rules-btn active" data-rules="russian">🇷🇺 Russian</button>
@@ -232,11 +256,11 @@
 
     <h3 style="color:#fff; margin: 10px 0 0 0; font-size:1rem; text-align:center;">Game Mode</h3>
     <div class="mode-selector">
-      <button class="mode-btn active" data-mode="1">🤖 1 Player (Vs AI)</button>
+      <button class="mode-btn active" data-mode="1">🤖 1 Player</button>
       <button class="mode-btn" data-mode="2">👥 2 Players</button>
     </div>
 
-    <h3 style="color:#fff; margin: 10px 0 0 0; font-size:1rem; text-align:center;">Board Theme</h3>
+    <h3 style="color:#fff; margin: 10px 0 0 0; font-size:1rem; text-align:center;">Theme</h3>
     <div class="theme-selector">
       <button class="theme-btn active" data-theme="theme-wood">Wood</button>
       <button class="theme-btn" data-theme="theme-marble">Marble</button>
@@ -249,6 +273,7 @@
 var SAVE_KEY = 'checkers_save_state';
 var THEME_KEY = 'checkers_theme';
 var RULES_KEY = 'checkers_rules';
+var DIFF_KEY = 'checkers_diff';
 
 var audioCtx = null;
 function initAudio() {
@@ -307,6 +332,7 @@ var titleB = document.getElementById('title-b');
 var countW = document.getElementById('count-w');
 var countB = document.getElementById('count-b');
 var msgOverlay = document.getElementById('msg-overlay');
+var thinkingOverlay = document.getElementById('thinking-overlay');
 var menuModal = document.getElementById('menu-modal');
 var menuStatus = document.getElementById('menu-status');
 
@@ -325,15 +351,15 @@ function getPieceSVG(side, isKing) {
   }
 
   return '<svg viewBox="0 0 100 100">' +
-    '<circle cx="50" cy="53" r="45" fill="' + strokeEdge + '" />' +
-    '<circle cx="50" cy="49" r="45" fill="' + outer + '" stroke="' + strokeEdge + '" stroke-width="1.5"/>' +
-    '<circle cx="50" cy="49" r="43" fill="none" stroke="' + hiRing + '" stroke-width="1.5"/>' +
-    '<circle cx="50" cy="49" r="35" fill="' + groove + '" stroke="' + strokeEdge + '" stroke-width="1"/>' +
-    '<circle cx="50" cy="49" r="28" fill="' + outer + '" />' +
-    '<circle cx="50" cy="49" r="27" fill="none" stroke="' + hiRing + '" stroke-width="1.4"/>' +
-    '<circle cx="50" cy="49" r="20" fill="' + groove + '" />' +
-    '<circle cx="50" cy="49" r="14" fill="' + center + '" />' +
-    '<circle cx="50" cy="49" r="13" fill="none" stroke="' + hiRing + '" stroke-width="1"/>' +
+    '<circle cx="50" cy="53" r="46" fill="' + strokeEdge + '" />' +
+    '<circle cx="50" cy="49" r="46" fill="' + outer + '" stroke="' + strokeEdge + '" stroke-width="1.5"/>' +
+    '<circle cx="50" cy="49" r="44" fill="none" stroke="' + hiRing + '" stroke-width="1.5"/>' +
+    '<circle cx="50" cy="49" r="36" fill="' + groove + '" stroke="' + strokeEdge + '" stroke-width="1"/>' +
+    '<circle cx="50" cy="49" r="29" fill="' + outer + '" />' +
+    '<circle cx="50" cy="49" r="28" fill="none" stroke="' + hiRing + '" stroke-width="1.4"/>' +
+    '<circle cx="50" cy="49" r="21" fill="' + groove + '" />' +
+    '<circle cx="50" cy="49" r="15" fill="' + center + '" />' +
+    '<circle cx="50" cy="49" r="14" fill="none" stroke="' + hiRing + '" stroke-width="1"/>' +
     crownStr +
   '</svg>';
 }
@@ -362,10 +388,16 @@ var isVsAI = true;
 var aiSide = 'b';
 var aiMoveTimeout = null;
 var currentRuleset = 'russian';
+var aiDifficulty = 6; // 1 to 6 (Grandmaster)
+
+// Transposition Table for Memory
+var transpositionTable = new Map();
 
 try {
     var storedRules = localStorage.getItem(RULES_KEY);
     if (storedRules) currentRuleset = storedRules;
+    var storedDiff = localStorage.getItem(DIFF_KEY);
+    if (storedDiff) aiDifficulty = parseInt(storedDiff);
 } catch(e) {}
 
 function createGrid() {
@@ -411,7 +443,8 @@ function persistState() {
         b: b, turn: turn, lastMove: lastMove, historyStack: historyStack, 
         gameOver: gameOver, multiJumpPiece: multiJumpPiece, 
         removedDuringTurn: removedDuringTurn, pieceIdCounter: pieceIdCounter, 
-        halfMoveClock: halfMoveClock, isVsAI: isVsAI, currentRuleset: currentRuleset
+        halfMoveClock: halfMoveClock, isVsAI: isVsAI, currentRuleset: currentRuleset,
+        aiDifficulty: aiDifficulty
       }));
   } catch (e) {}
 }
@@ -457,6 +490,7 @@ function loadState() {
           pieceIdCounter = parsed.pieceIdCounter || 100; halfMoveClock = parsed.halfMoveClock || 0;
           isVsAI = parsed.isVsAI !== undefined ? parsed.isVsAI : true;
           currentRuleset = parsed.currentRuleset || 'russian';
+          aiDifficulty = parsed.aiDifficulty || 6;
           updateMenuUI();
           return true;
         }
@@ -485,11 +519,21 @@ function updateMenuUI() {
         rulesBtns[j].classList.remove('active');
     }
   }
+
+  var diffBtns = document.querySelectorAll('.diff-btn');
+  for(var k=0; k<diffBtns.length; k++) {
+    if (parseInt(diffBtns[k].dataset.diff) === aiDifficulty) {
+        diffBtns[k].classList.add('active');
+    } else {
+        diffBtns[k].classList.remove('active');
+    }
+  }
 }
 
 function initGame(forceNew) {
   if (forceNew === undefined) forceNew = false;
   clearTimeout(aiMoveTimeout);
+  transpositionTable.clear(); // clear memory for new game
   createGrid();
   if (forceNew || !loadState()) {
     pieceIdCounter = 0; halfMoveClock = 0;
@@ -573,9 +617,10 @@ function getCaptures(r, c, p, boardState, ghosts) {
   return moves;
 }
 
-function getSimpleMoves(r, c, p) {
+function getSimpleMoves(r, c, p, boardState) {
   var moves = [];
   if (!p) return moves;
+  if (!boardState) boardState = b;
 
   var isIndianKing = (currentRuleset === 'indian' && p.king);
 
@@ -584,7 +629,7 @@ function getSimpleMoves(r, c, p) {
       var dr = DIRS[i][0];
       var dc = DIRS[i][1];
       var step = 1;
-      while (inBounds(r + step * dr, c + step * dc) && !b[r + step * dr][c + step * dc]) {
+      while (inBounds(r + step * dr, c + step * dc) && !boardState[r + step * dr][c + step * dc]) {
         moves.push({ r: r + step * dr, c: c + step * dc }); step++;
       }
     }
@@ -594,19 +639,20 @@ function getSimpleMoves(r, c, p) {
       var ndr = directions[j][0];
       var ndc = directions[j][1];
       var tr = r + ndr, tc = c + ndc;
-      if (inBounds(tr, tc) && !b[tr][tc]) moves.push({ r: tr, c: tc });
+      if (inBounds(tr, tc) && !boardState[tr][tc]) moves.push({ r: tr, c: tc });
     }
   }
   return moves;
 }
 
-function getAllCaptures(side) {
+function getAllCaptures(side, boardState) {
+  if (!boardState) boardState = b;
   var list = [];
   for (var r = 0; r < 8; r++) {
     for (var c = 0; c < 8; c++) {
-      var p = b[r][c];
+      var p = boardState[r][c];
       if (p && p.side === side) {
-        var caps = getCaptures(r, c, p, b, []);
+        var caps = getCaptures(r, c, p, boardState, []);
         if (caps.length > 0) list.push({ from: { r: r, c: c }, moves: caps });
       }
     }
@@ -646,17 +692,17 @@ function handleTap(r, c, fromAI) {
   }
   var p = b[r][c];
   if (p && p.side === turn) {
-    var allCaps = getAllCaptures(turn);
+    var allCaps = getAllCaptures(turn, b);
     if (allCaps.length > 0) {
       var pieceCaps = null;
-      for (var k=0; k<allCaps.length; k++) { if (allCaps[k].from.r === r && allCaps[k].from.c === c) pieceCaps = allCaps[k]; }
+      for (var j=0; j<allCaps.length; j++) { if (allCaps[j].from.r === r && allCaps[j].from.c === c) pieceCaps = allCaps[j]; }
       if (!pieceCaps) { 
           if (!fromAI) showMessage("Capture is mandatory!"); 
           return; 
       }
       selected = { r: r, c: c }; targets = pieceCaps.moves;
     } else {
-      var simple = getSimpleMoves(r, c, p);
+      var simple = getSimpleMoves(r, c, p, b);
       if (simple.length === 0) return;
       selected = { r: r, c: c }; targets = simple;
     }
@@ -708,7 +754,7 @@ function executeMove(fr, fc, target, fromAI) {
 }
 
 function checkGameOver() {
-  var oppCaps = getAllCaptures(turn);
+  var oppCaps = getAllCaptures(turn, b);
   var oppPieces = 0;
   var oppSimple = false;
   
@@ -716,7 +762,7 @@ function checkGameOver() {
     for (var c = 0; c < 8; c++) {
         if (b[r][c] && b[r][c].side === turn) {
             oppPieces++;
-            if (getSimpleMoves(r, c, b[r][c]).length > 0) oppSimple = true;
+            if (getSimpleMoves(r, c, b[r][c], b).length > 0) oppSimple = true;
         }
     }
   }
@@ -740,7 +786,7 @@ function checkGameOver() {
 
 function render() {
   var wCount = 0; var bCount = 0;
-  var allCaps = getAllCaptures(turn);
+  var allCaps = getAllCaptures(turn, b);
   var capCoords = {};
   for (var i=0; i<allCaps.length; i++) {
       capCoords[allCaps[i].from.r + ',' + allCaps[i].from.c] = true;
@@ -760,7 +806,7 @@ function render() {
       if (!gameOver && p && p.side === turn && !multiJumpPiece) {
         if (!isVsAI || turn !== aiSide) {
             if (allCaps.length > 0) { if (capCoords[r + ',' + c]) cell.classList.add('movable', 'movable-cap'); } 
-            else if (getSimpleMoves(r, c, p).length > 0) cell.classList.add('movable');
+            else if (getSimpleMoves(r, c, p, b).length > 0) cell.classList.add('movable');
         }
       }
       if (selected && selected.r === r && selected.c === c) cell.classList.add('selected');
@@ -830,94 +876,532 @@ function render() {
 function triggerAIIfNeeded() {
     clearTimeout(aiMoveTimeout);
     if (isVsAI && turn === aiSide && !gameOver) {
-        aiMoveTimeout = setTimeout(doAITurn, 600);
+        if (thinkingOverlay) thinkingOverlay.classList.add('active'); // Block UI while processing deep search
+        // Use a short timeout to allow the UI to update the "Thinking..." state before blocking the main thread
+        aiMoveTimeout = setTimeout(function() {
+             requestAnimationFrame(function() {
+                 doAITurn();
+             });
+        }, 50); // Faster trigger
     }
 }
 
-function doAITurn() {
-  if (gameOver || turn !== aiSide) return;
-
-  if (multiJumpPiece) {
-    var caps = getCaptures(multiJumpPiece.r, multiJumpPiece.c, b[multiJumpPiece.r][multiJumpPiece.c], b, removedDuringTurn);
-    if (caps.length > 0) {
-        var randomCap = caps[Math.floor(Math.random() * caps.length)];
-        handleTap(multiJumpPiece.r, multiJumpPiece.c, true);
-        setTimeout(function() { handleTap(randomCap.r, randomCap.c, true); }, 350);
+// Memory: Hash board into string
+function hashBoardState(boardState, currentTurn) {
+    var h = currentTurn;
+    for(var r=0; r<8; r++) {
+        for(var c=0; c<8; c++) {
+            if (!boardState[r][c]) h += '.';
+            else {
+                var p = boardState[r][c];
+                h += (p.side === 'w' ? (p.king ? 'W' : 'w') : (p.king ? 'B' : 'b'));
+            }
+        }
     }
-    return;
-  }
+    return h;
+}
 
-  var allCaps = getAllCaptures(turn);
-  if (allCaps.length > 0) {
-    var randomStart = allCaps[Math.floor(Math.random() * allCaps.length)];
-    var randomMove = randomStart.moves[Math.floor(Math.random() * randomStart.moves.length)];
-    handleTap(randomStart.from.r, randomStart.from.c, true);
-    setTimeout(function() { handleTap(randomMove.r, randomMove.c, true); }, 350);
-    return;
-  }
-
-  var moves = [];
-  for (var r = 0; r < 8; r++) {
-    for (var c = 0; c < 8; c++) {
-      var p = b[r][c];
-      if (p && p.side === turn) {
-        var mvs = getSimpleMoves(r, c, p);
-        for (var i=0; i<mvs.length; i++) moves.push({from: {r: r, c: c}, to: mvs[i]});
-      }
-    }
-  }
-
-  if (moves.length === 0) return;
-
-  var bestScore = -Infinity;
-  var bestMoves = [];
-
-  for (var mIdx=0; mIdx<moves.length; mIdx++) {
-    var m = moves[mIdx];
-    var simB = cloneBoard(b);
-    var pSim = simB[m.from.r][m.from.c];
-    simB[m.to.r][m.to.c] = pSim;
-    simB[m.from.r][m.from.c] = null;
-    
-    if (!pSim.king && ((pSim.side === 'w' && m.to.r === 0) || (pSim.side === 'b' && m.to.r === 7))) {
-        simB[m.to.r][m.to.c].king = true;
-    }
-
+// Grandmaster Evaluator
+function evaluateBoard(boardState, currentTurn) {
     var myScore = 0;
     var oppScore = 0;
-    var danger = 0;
+    
+    // Mobility (Options)
+    var myMobility = 0;
+    var oppMobility = 0;
+    
+    // Pieces tracking for endgame
+    var myPieces = [];
+    var oppPieces = [];
 
     for(var ir=0; ir<8; ir++) {
       for(var ic=0; ic<8; ic++) {
-        var piece = simB[ir][ic];
+        var piece = boardState[ir][ic];
         if (piece) {
-          var val = piece.king ? 3 : 1;
-          if (!piece.king) val += (piece.side === 'b' ? ir * 0.02 : (7 - ir) * 0.02);
-          if (ic > 1 && ic < 6) val += 0.03;
-          if (piece.side === turn) {
+          // Base Material Value
+          var val = piece.king ? 800 : 100;
+          
+          if (!piece.king) {
+              // Advancing adds compounding value
+              var advancement = (piece.side === 'b' ? ir : (7 - ir));
+              val += (advancement * advancement * 1.5);
+              
+              // Runaway Checker (No enemies in front)
+              var isRunaway = true;
+              var forwardDir = (piece.side === 'b') ? 1 : -1;
+              for (var scanR = ir + forwardDir; scanR >= 0 && scanR < 8; scanR += forwardDir) {
+                  for (var scanC = 0; scanC < 8; scanC++) {
+                      if (boardState[scanR][scanC] && boardState[scanR][scanC].side !== piece.side) {
+                          isRunaway = false;
+                          break;
+                      }
+                  }
+                  if (!isRunaway) break;
+              }
+              if (isRunaway && advancement > 3) val += 300; // Almost a king
+          } else {
+              // King Centralization
+              if (ic > 2 && ic < 5 && ir > 2 && ir < 5) val += 40;
+          }
+          
+          // Center control bonus
+          if (ic > 1 && ic < 6 && ir > 1 && ir < 6) val += 20;
+          // Back row defense bonus (for non-kings) - critical for not getting crowned on
+          if (!piece.king && (ir === 0 || ir === 7)) val += 45;
+          // Edge safety bonus (cannot be jumped)
+          if (ic === 0 || ic === 7) val += 15;
+
+          // Defender Formation (Connected diagonally to friendly pieces)
+          var connected = 0;
+          for (var dir=0; dir<DIRS.length; dir++) {
+              var nr = ir + DIRS[dir][0];
+              var nc = ic + DIRS[dir][1];
+              if (inBounds(nr, nc) && boardState[nr][nc] && boardState[nr][nc].side === piece.side) {
+                  connected++;
+              }
+          }
+          val += (connected * 12); // Encourage tight packs
+
+          // Add to total score
+          if (piece.side === currentTurn) {
               myScore += val;
+              myPieces.push({r: ir, c: ic, king: piece.king});
+              myMobility += getSimpleMoves(ir, ic, piece, boardState).length;
           } else {
               oppScore += val;
-              var simCaps = getCaptures(ir, ic, piece, simB, []);
-              danger += simCaps.length * 2.5; 
+              oppPieces.push({r: ir, c: ic, king: piece.king});
+              oppMobility += getSimpleMoves(ir, ic, piece, boardState).length;
           }
         }
       }
     }
     
-    var score = myScore - oppScore - danger + (Math.random() * 0.01); 
-
-    if (score > bestScore) {
-        bestScore = score;
-        bestMoves = [m];
-    } else if (Math.abs(score - bestScore) < 0.001) {
-        bestMoves.push(m);
+    // Suffocating the opponent
+    var mobilityScore = (myMobility - oppMobility) * 5;
+    
+    // Endgame Terminator Protocol: Hunt down remaining pieces
+    var endgameScore = 0;
+    if (myScore > oppScore + 300 && oppPieces.length <= 3) {
+        for (var i = 0; i < myPieces.length; i++) {
+            if (myPieces[i].king) {
+                for (var j = 0; j < oppPieces.length; j++) {
+                    var dist = Math.abs(myPieces[i].r - oppPieces[j].r) + Math.abs(myPieces[i].c - oppPieces[j].c);
+                    endgameScore += (14 - dist) * 10; // Reward closer proximity
+                    
+                    // Reward pushing opponent to corners/edges
+                    if (oppPieces[j].r === 0 || oppPieces[j].r === 7 || oppPieces[j].c === 0 || oppPieces[j].c === 7) {
+                        endgameScore += 50;
+                    }
+                }
+            }
+        }
     }
+    
+    // Add a tiny random factor to prevent repetitive identical games in equal positions
+    return (myScore - oppScore) + mobilityScore + endgameScore + (Math.random() * 2);
+}
+
+// Recursively find all possible sequences of multi-jumps for a given piece
+function generateAllJumpSequences(r, c, p, boardState) {
+    var sequences = [];
+    var initialCaps = getCaptures(r, c, p, boardState, []);
+    
+    if (initialCaps.length === 0) return sequences;
+
+    function searchJumps(currR, currC, currBoard, currentSequence, ghosts) {
+        var furtherCaps = getCaptures(currR, currC, p, currBoard, ghosts);
+        if (furtherCaps.length === 0) {
+            sequences.push(currentSequence);
+            return;
+        }
+        for (var i=0; i<furtherCaps.length; i++) {
+            var move = furtherCaps[i];
+            var nextSequence = currentSequence.slice();
+            nextSequence.push(move);
+            
+            var nextGhosts = ghosts.slice();
+            nextGhosts.push(move.cap);
+            
+            var simB = cloneBoard(currBoard);
+            simB[move.r][move.c] = p;
+            simB[currR][currC] = null;
+            
+            searchJumps(move.r, move.c, simB, nextSequence, nextGhosts);
+        }
+    }
+
+    for (var i=0; i<initialCaps.length; i++) {
+        var firstMove = initialCaps[i];
+        var simB = cloneBoard(boardState);
+        simB[firstMove.r][firstMove.c] = p;
+        simB[r][c] = null;
+        searchJumps(firstMove.r, firstMove.c, simB, [firstMove], [firstMove.cap]);
+    }
+    return sequences;
+}
+
+// Generate all valid full turns (handling multi-jumps as a single turn) with Move Ordering
+function generateAllValidTurns(side, boardState, pvMoveStr) {
+    var turns = [];
+    var hasCaptures = false;
+    
+    for (var r = 0; r < 8; r++) {
+        for (var c = 0; c < 8; c++) {
+            var p = boardState[r][c];
+            if (p && p.side === side) {
+                var jumpSequences = generateAllJumpSequences(r, c, p, boardState);
+                if (jumpSequences.length > 0) {
+                    hasCaptures = true;
+                    for(var s=0; s<jumpSequences.length; s++) {
+                        // Weight captures heavily
+                        turns.push({ from: {r: r, c: c}, moves: jumpSequences[s], isCapture: true, priority: jumpSequences[s].length * 1000 });
+                    }
+                }
+            }
+        }
+    }
+
+    if (!hasCaptures) {
+        for (var r = 0; r < 8; r++) {
+            for (var c = 0; c < 8; c++) {
+                var p = boardState[r][c];
+                if (p && p.side === side) {
+                    var mvs = getSimpleMoves(r, c, p, boardState);
+                    for (var i=0; i<mvs.length; i++) {
+                        var prio = 0;
+                        // Prioritize center moves
+                        if (mvs[i].c > 1 && mvs[i].c < 6) prio += 10;
+                        // Prioritize King promotion moves
+                        if (!p.king && (mvs[i].r === 0 || mvs[i].r === 7)) prio += 100;
+                        turns.push({ from: {r: r, c: c}, moves: [mvs[i]], isCapture: false, priority: prio });
+                    }
+                }
+            }
+        }
+    }
+    
+    // Apply Principal Variation (PV) boost from previous depth iteration
+    if (pvMoveStr) {
+        for (var i=0; i<turns.length; i++) {
+            var moveSig = turns[i].from.r + "," + turns[i].from.c + "-" + turns[i].moves[turns[i].moves.length-1].r + "," + turns[i].moves[turns[i].moves.length-1].c;
+            if (moveSig === pvMoveStr) {
+                turns[i].priority += 10000; // Absolute highest priority
+            }
+        }
+    }
+    
+    // Sort turns by priority (Move Ordering for Alpha-Beta optimization)
+    turns.sort(function(a, b) { return b.priority - a.priority; });
+    
+    return turns;
+}
+
+// Quiescence Search: Keep searching if there are mandatory captures
+function quiescenceSearch(boardState, alpha, beta, isMaximizing, aiSideChar) {
+    var oppSideChar = aiSideChar === 'b' ? 'w' : 'b';
+    var currentSide = isMaximizing ? aiSideChar : oppSideChar;
+    
+    var eval = evaluateBoard(boardState, aiSideChar);
+    
+    // Stop condition: No captures available
+    var caps = getAllCaptures(currentSide, boardState);
+    if (caps.length === 0) return eval;
+
+    if (isMaximizing) {
+        alpha = Math.max(alpha, eval);
+        if (beta <= alpha) return alpha;
+    } else {
+        beta = Math.min(beta, eval);
+        if (beta <= alpha) return beta;
+    }
+    
+    var possibleTurns = generateAllValidTurns(currentSide, boardState, null);
+    
+    if (isMaximizing) {
+        var maxEval = -Infinity;
+        for (var i = 0; i < possibleTurns.length; i++) {
+            var turnSeq = possibleTurns[i];
+            if (!turnSeq.isCapture) continue; // Only search captures
+            
+            var simB = cloneBoard(boardState);
+            var pSim = simB[turnSeq.from.r][turnSeq.from.c];
+            var finalPos = turnSeq.from;
+            for (var j=0; j<turnSeq.moves.length; j++) {
+                var m = turnSeq.moves[j];
+                simB[m.r][m.c] = pSim;
+                simB[finalPos.r][finalPos.c] = null;
+                if (m.cap) simB[m.cap.r][m.cap.c] = null;
+                finalPos = m;
+            }
+            if (!pSim.king && ((pSim.side === 'w' && finalPos.r === 0) || (pSim.side === 'b' && finalPos.r === 7))) {
+                simB[finalPos.r][finalPos.c].king = true;
+            }
+            
+            var ev = quiescenceSearch(simB, alpha, beta, false, aiSideChar);
+            maxEval = Math.max(maxEval, ev);
+            alpha = Math.max(alpha, ev);
+            if (beta <= alpha) break;
+        }
+        return maxEval === -Infinity ? eval : maxEval;
+    } else {
+        var minEval = Infinity;
+        for (var i = 0; i < possibleTurns.length; i++) {
+            var turnSeq = possibleTurns[i];
+            if (!turnSeq.isCapture) continue;
+            
+            var simB = cloneBoard(boardState);
+            var pSim = simB[turnSeq.from.r][turnSeq.from.c];
+            var finalPos = turnSeq.from;
+            for (var j=0; j<turnSeq.moves.length; j++) {
+                var m = turnSeq.moves[j];
+                simB[m.r][m.c] = pSim;
+                simB[finalPos.r][finalPos.c] = null;
+                if (m.cap) simB[m.cap.r][m.cap.c] = null;
+                finalPos = m;
+            }
+            if (!pSim.king && ((pSim.side === 'w' && finalPos.r === 0) || (pSim.side === 'b' && finalPos.r === 7))) {
+                simB[finalPos.r][finalPos.c].king = true;
+            }
+            
+            var ev = quiescenceSearch(simB, alpha, beta, true, aiSideChar);
+            minEval = Math.min(minEval, ev);
+            beta = Math.min(beta, ev);
+            if (beta <= alpha) break;
+        }
+        return minEval === Infinity ? eval : minEval;
+    }
+}
+
+// Alpha-Beta Pruning Minimax with Iterative Deepening / TT compatibility
+function minimax(boardState, depth, alpha, beta, isMaximizing, aiSideChar) {
+    var oppSideChar = aiSideChar === 'b' ? 'w' : 'b';
+    var currentSide = isMaximizing ? aiSideChar : oppSideChar;
+    
+    var hash = hashBoardState(boardState, currentSide);
+    var pvMoveStr = null;
+    
+    if (transpositionTable.has(hash)) {
+        var cached = transpositionTable.get(hash);
+        if (cached.depth >= depth) {
+            return cached.score;
+        }
+        pvMoveStr = cached.bestMoveStr;
+    }
+
+    var possibleTurns = generateAllValidTurns(currentSide, boardState, pvMoveStr);
+    if (possibleTurns.length === 0) {
+        return isMaximizing ? -100000 : 100000; // Loss / Win
+    }
+    
+    if (depth <= 0) {
+        // Drop into Quiescence Search to fix Horizon Effect
+        if (aiDifficulty >= 5) {
+            var qScore = quiescenceSearch(boardState, alpha, beta, isMaximizing, aiSideChar);
+            transpositionTable.set(hash, {depth: depth, score: qScore, bestMoveStr: null});
+            return qScore;
+        } else {
+            var eScore = evaluateBoard(boardState, aiSideChar);
+            transpositionTable.set(hash, {depth: depth, score: eScore, bestMoveStr: null});
+            return eScore;
+        }
+    }
+
+    var bestMoveStr = null;
+
+    if (isMaximizing) {
+        var maxEval = -Infinity;
+        for (var i = 0; i < possibleTurns.length; i++) {
+            var turnSeq = possibleTurns[i];
+            var simB = cloneBoard(boardState);
+            var pSim = simB[turnSeq.from.r][turnSeq.from.c];
+            
+            var finalPos = turnSeq.from;
+            for (var j=0; j<turnSeq.moves.length; j++) {
+                var m = turnSeq.moves[j];
+                simB[m.r][m.c] = pSim;
+                simB[finalPos.r][finalPos.c] = null;
+                if (m.cap) simB[m.cap.r][m.cap.c] = null;
+                finalPos = m;
+            }
+            
+            if (!pSim.king && ((pSim.side === 'w' && finalPos.r === 0) || (pSim.side === 'b' && finalPos.r === 7))) {
+                simB[finalPos.r][finalPos.c].king = true;
+            }
+            
+            var ev = minimax(simB, depth - 1, alpha, beta, false, aiSideChar);
+            if (ev > maxEval) {
+                maxEval = ev;
+                bestMoveStr = turnSeq.from.r + "," + turnSeq.from.c + "-" + turnSeq.moves[turnSeq.moves.length-1].r + "," + turnSeq.moves[turnSeq.moves.length-1].c;
+            }
+            alpha = Math.max(alpha, ev);
+            if (beta <= alpha) break; 
+        }
+        transpositionTable.set(hash, {depth: depth, score: maxEval, bestMoveStr: bestMoveStr});
+        return maxEval;
+    } else {
+        var minEval = Infinity;
+        for (var i = 0; i < possibleTurns.length; i++) {
+            var turnSeq = possibleTurns[i];
+            var simB = cloneBoard(boardState);
+            var pSim = simB[turnSeq.from.r][turnSeq.from.c];
+            
+            var finalPos = turnSeq.from;
+            for (var j=0; j<turnSeq.moves.length; j++) {
+                var m = turnSeq.moves[j];
+                simB[m.r][m.c] = pSim;
+                simB[finalPos.r][finalPos.c] = null;
+                if (m.cap) simB[m.cap.r][m.cap.c] = null;
+                finalPos = m;
+            }
+            
+            if (!pSim.king && ((pSim.side === 'w' && finalPos.r === 0) || (pSim.side === 'b' && finalPos.r === 7))) {
+                simB[finalPos.r][finalPos.c].king = true;
+            }
+            
+            var ev = minimax(simB, depth - 1, alpha, beta, true, aiSideChar);
+            if (ev < minEval) {
+                minEval = ev;
+                bestMoveStr = turnSeq.from.r + "," + turnSeq.from.c + "-" + turnSeq.moves[turnSeq.moves.length-1].r + "," + turnSeq.moves[turnSeq.moves.length-1].c;
+            }
+            beta = Math.min(beta, ev);
+            if (beta <= alpha) break; 
+        }
+        transpositionTable.set(hash, {depth: depth, score: minEval, bestMoveStr: bestMoveStr});
+        return minEval;
+    }
+}
+
+function doAITurn() {
+  if (gameOver || turn !== aiSide) {
+      if (thinkingOverlay) thinkingOverlay.classList.remove('active');
+      return;
   }
 
-  var chosen = bestMoves[Math.floor(Math.random() * bestMoves.length)];
-  handleTap(chosen.from.r, chosen.from.c, true);
-  setTimeout(function() { handleTap(chosen.to.r, chosen.to.c, true); }, 350);
+  // Clear Transposition Table periodically to prevent memory leaks in browser
+  if (transpositionTable.size > 200000) transpositionTable.clear();
+
+  if (multiJumpPiece) {
+    var caps = getCaptures(multiJumpPiece.r, multiJumpPiece.c, b[multiJumpPiece.r][multiJumpPiece.c], b, removedDuringTurn);
+    if (caps.length > 0) {
+        var bestCapMove = caps[Math.floor(Math.random() * caps.length)];
+        if (aiDifficulty >= 4) {
+             var bestScore = -Infinity;
+             for (var i=0; i<caps.length; i++) {
+                 var simB = cloneBoard(b);
+                 var m = caps[i];
+                 var pSim = simB[multiJumpPiece.r][multiJumpPiece.c];
+                 simB[m.r][m.c] = pSim;
+                 simB[multiJumpPiece.r][multiJumpPiece.c] = null;
+                 simB[m.cap.r][m.cap.c] = null;
+                 for(var g=0; g<removedDuringTurn.length; g++) simB[removedDuringTurn[g].r][removedDuringTurn[g].c] = null;
+                 
+                 var score = minimax(simB, aiDifficulty >= 5 ? 5 : 3, -Infinity, Infinity, false, turn);
+                 if (score > bestScore) { bestScore = score; bestCapMove = m; }
+             }
+        }
+        
+        handleTap(multiJumpPiece.r, multiJumpPiece.c, true);
+        setTimeout(function() { 
+            handleTap(bestCapMove.r, bestCapMove.c, true); 
+            if (thinkingOverlay) thinkingOverlay.classList.remove('active');
+        }, 350);
+    } else {
+        if (thinkingOverlay) thinkingOverlay.classList.remove('active');
+    }
+    return;
+  }
+
+  var possibleTurns = generateAllValidTurns(turn, b, null);
+  if (possibleTurns.length === 0) {
+      if (thinkingOverlay) thinkingOverlay.classList.remove('active');
+      return;
+  }
+
+  var bestScore = -Infinity;
+  var bestTurns = [];
+
+  // Deep Iterative Searching configurations
+  var searchDepth = 1;
+  if (aiDifficulty === 1) searchDepth = 1; 
+  if (aiDifficulty === 2) searchDepth = 3; 
+  if (aiDifficulty === 3) searchDepth = 5; 
+  if (aiDifficulty === 4) searchDepth = 7; 
+  if (aiDifficulty === 5) searchDepth = 8; // God Tier
+  if (aiDifficulty === 6) searchDepth = 9; // Grandmaster 🧠 - Pushes JS Limits
+
+  // For Grandmaster, we use Iterative Deepening to seed the Transposition Table 
+  // This calculates shallow depths first, which saves the "best move" to memory.
+  // When it calculates depth 9, it checks that move first, causing massive Alpha-Beta cutoffs.
+  if (aiDifficulty >= 5) {
+      for (var d = 2; d <= searchDepth - 2; d += 2) {
+          for (var i=0; i<possibleTurns.length; i++) {
+              var turnSeq = possibleTurns[i];
+              var simB = cloneBoard(b);
+              var pSim = simB[turnSeq.from.r][turnSeq.from.c];
+              var finalPos = turnSeq.from;
+              for (var j=0; j<turnSeq.moves.length; j++) {
+                  var m = turnSeq.moves[j];
+                  simB[m.r][m.c] = pSim;
+                  simB[finalPos.r][finalPos.c] = null;
+                  if (m.cap) simB[m.cap.r][m.cap.c] = null;
+                  finalPos = m;
+              }
+              if (!pSim.king && ((pSim.side === 'w' && finalPos.r === 0) || (pSim.side === 'b' && finalPos.r === 7))) { simB[finalPos.r][finalPos.c].king = true; }
+              minimax(simB, d, -Infinity, Infinity, false, turn);
+          }
+      }
+  }
+
+  // Get the PV Move from the hash table to prioritize the absolute best path
+  var currentHash = hashBoardState(b, turn);
+  var pvStr = null;
+  if (transpositionTable.has(currentHash)) {
+      pvStr = transpositionTable.get(currentHash).bestMoveStr;
+  }
+  possibleTurns = generateAllValidTurns(turn, b, pvStr);
+
+  for (var i=0; i<possibleTurns.length; i++) {
+      var turnSeq = possibleTurns[i];
+      var simB = cloneBoard(b);
+      var pSim = simB[turnSeq.from.r][turnSeq.from.c];
+      
+      var finalPos = turnSeq.from;
+      for (var j=0; j<turnSeq.moves.length; j++) {
+          var m = turnSeq.moves[j];
+          simB[m.r][m.c] = pSim;
+          simB[finalPos.r][finalPos.c] = null;
+          if (m.cap) simB[m.cap.r][m.cap.c] = null;
+          finalPos = m;
+      }
+      
+      if (!pSim.king && ((pSim.side === 'w' && finalPos.r === 0) || (pSim.side === 'b' && finalPos.r === 7))) {
+          simB[finalPos.r][finalPos.c].king = true;
+      }
+      
+      var score = 0;
+      if (aiDifficulty === 1) {
+          score = evaluateBoard(simB, turn) + (Math.random() * 200); // High noise
+      } else {
+          score = minimax(simB, searchDepth - 1, -Infinity, Infinity, false, turn);
+      }
+
+      if (score > bestScore) {
+          bestScore = score;
+          bestTurns = [turnSeq];
+      } else if (Math.abs(score - bestScore) < 0.001) {
+          bestTurns.push(turnSeq);
+      }
+  }
+
+  var chosenTurn = bestTurns[Math.floor(Math.random() * bestTurns.length)];
+  
+  var firstMove = chosenTurn.moves[0];
+  handleTap(chosenTurn.from.r, chosenTurn.from.c, true);
+  
+  setTimeout(function() { 
+      handleTap(firstMove.r, firstMove.c, true); 
+      if (thinkingOverlay) thinkingOverlay.classList.remove('active');
+  }, 350);
 }
 
 var btnUndo = document.getElementById('btn-undo');
@@ -952,8 +1436,6 @@ var btnMenu = document.getElementById('btn-menu');
 if (btnMenu) {
     btnMenu.addEventListener('pointerdown', function(e) {
       e.preventDefault(); 
-      var rBox = document.getElementById('rules-box');
-      if (rBox) rBox.classList.remove('open'); 
       if (menuModal) menuModal.classList.add('open');
     });
 }
@@ -975,29 +1457,24 @@ if (btnRestart) {
     });
 }
 
-var btnDraw = document.getElementById('btn-draw');
-if (btnDraw) {
-    btnDraw.addEventListener('pointerdown', function(e) {
-      e.preventDefault();
-      if (gameOver) return;
-      if (menuModal) menuModal.classList.remove('open');
-      var offeringPlayer = turn === 'w' ? 'Player 1' : (isVsAI ? 'Computer' : 'Player 2');
-      var acceptingPlayer = turn === 'w' ? (isVsAI ? 'Computer' : 'Player 2') : 'Player 1';
-      
-      if (isVsAI) { showMessage("🤖 Computer Refuses Draw!"); return; }
-      if (confirm(offeringPlayer + " offers a draw. Does " + acceptingPlayer + " accept?")) {
-        gameOver = true; showMessage("🤝 Match Drawn!"); playSound('thud'); persistState();
-      }
-    });
-}
-
-var btnToggleRules = document.getElementById('btn-toggle-rules');
-if (btnToggleRules) {
-    btnToggleRules.addEventListener('pointerdown', function(e) {
-      e.preventDefault(); 
-      var rBox = document.getElementById('rules-box');
-      if (rBox) rBox.classList.toggle('open');
-    });
+var diffBtns = document.querySelectorAll('.diff-btn');
+for(var i=0; i<diffBtns.length; i++) {
+  diffBtns[i].addEventListener('pointerdown', function(e) {
+    e.preventDefault();
+    if (this.classList.contains('active')) return;
+    
+    // Allow seamless switching of AI difficulty mid-game
+    aiDifficulty = parseInt(this.dataset.diff);
+    for (var j=0; j<diffBtns.length; j++) diffBtns[j].classList.remove('active');
+    this.classList.add('active');
+    
+    try { localStorage.setItem(DIFF_KEY, aiDifficulty); } catch(err) {}
+    persistState();
+    
+    // Auto-close menu to show the switch was successful
+    if (menuModal) menuModal.classList.remove('open');
+    showMessage("AI Difficulty Changed");
+  });
 }
 
 if (menuModal) {
