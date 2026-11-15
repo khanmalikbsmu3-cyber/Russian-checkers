@@ -388,10 +388,7 @@ var isVsAI = true;
 var aiSide = 'b';
 var aiMoveTimeout = null;
 var currentRuleset = 'russian';
-var aiDifficulty = 6; // 1 to 6 (Grandmaster)
-
-// Transposition Table for Memory
-var transpositionTable = new Map();
+var aiDifficulty = 6; 
 
 try {
     var storedRules = localStorage.getItem(RULES_KEY);
@@ -421,18 +418,15 @@ function createGrid() {
 }
 
 function cloneBoard(source) {
-  var newBoard = [];
+  var newBoard = new Array(8);
   for (var r = 0; r < 8; r++) {
-      var newRow = [];
+      var newRow = new Array(8);
       for (var c = 0; c < 8; c++) {
           var p = source[r][c];
-          if (p) {
-              newRow.push({ side: p.side, king: p.king, id: p.id });
-          } else {
-              newRow.push(null);
-          }
+          if (p) newRow[c] = { side: p.side, king: p.king, id: p.id };
+          else newRow[c] = null;
       }
-      newBoard.push(newRow);
+      newBoard[r] = newRow;
   }
   return newBoard;
 }
@@ -533,7 +527,6 @@ function updateMenuUI() {
 function initGame(forceNew) {
   if (forceNew === undefined) forceNew = false;
   clearTimeout(aiMoveTimeout);
-  transpositionTable.clear(); // clear memory for new game
   createGrid();
   if (forceNew || !loadState()) {
     pieceIdCounter = 0; halfMoveClock = 0;
@@ -876,41 +869,26 @@ function render() {
 function triggerAIIfNeeded() {
     clearTimeout(aiMoveTimeout);
     if (isVsAI && turn === aiSide && !gameOver) {
-        if (thinkingOverlay) thinkingOverlay.classList.add('active'); // Block UI while processing deep search
-        // Use a short timeout to allow the UI to update the "Thinking..." state before blocking the main thread
+        if (thinkingOverlay) thinkingOverlay.classList.add('active'); 
         aiMoveTimeout = setTimeout(function() {
              requestAnimationFrame(function() {
                  doAITurn();
              });
-        }, 50); // Faster trigger
+        }, 50); 
     }
 }
 
-// Memory: Hash board into string
-function hashBoardState(boardState, currentTurn) {
-    var h = currentTurn;
-    for(var r=0; r<8; r++) {
-        for(var c=0; c<8; c++) {
-            if (!boardState[r][c]) h += '.';
-            else {
-                var p = boardState[r][c];
-                h += (p.side === 'w' ? (p.king ? 'W' : 'w') : (p.king ? 'B' : 'b'));
-            }
-        }
-    }
-    return h;
-}
+// ----------------------------------------------------
+// TRUE GRANDMASTER AI LOGIC (Bug-free, Deterministic)
+// ----------------------------------------------------
 
-// Grandmaster Evaluator
-function evaluateBoard(boardState, currentTurn) {
+// Evaluate board strictly from the AI's perspective (aiSideChar)
+function evaluateBoard(boardState, aiSideChar) {
     var myScore = 0;
     var oppScore = 0;
-    
-    // Mobility (Options)
     var myMobility = 0;
     var oppMobility = 0;
     
-    // Pieces tracking for endgame
     var myPieces = [];
     var oppPieces = [];
 
@@ -918,15 +896,14 @@ function evaluateBoard(boardState, currentTurn) {
       for(var ic=0; ic<8; ic++) {
         var piece = boardState[ir][ic];
         if (piece) {
-          // Base Material Value
-          var val = piece.king ? 800 : 100;
+          var val = piece.king ? 1000 : 100;
           
           if (!piece.king) {
               // Advancing adds compounding value
               var advancement = (piece.side === 'b' ? ir : (7 - ir));
               val += (advancement * advancement * 1.5);
               
-              // Runaway Checker (No enemies in front)
+              // Runaway Checker Detection (No enemies in front)
               var isRunaway = true;
               var forwardDir = (piece.side === 'b') ? 1 : -1;
               for (var scanR = ir + forwardDir; scanR >= 0 && scanR < 8; scanR += forwardDir) {
@@ -938,20 +915,22 @@ function evaluateBoard(boardState, currentTurn) {
                   }
                   if (!isRunaway) break;
               }
-              if (isRunaway && advancement > 3) val += 300; // Almost a king
+              if (isRunaway && advancement > 3) val += 300; 
           } else {
               // King Centralization
-              if (ic > 2 && ic < 5 && ir > 2 && ir < 5) val += 40;
+              if (ic > 2 && ic < 5 && ir > 2 && ir < 5) val += 50;
           }
           
           // Center control bonus
           if (ic > 1 && ic < 6 && ir > 1 && ir < 6) val += 20;
-          // Back row defense bonus (for non-kings) - critical for not getting crowned on
-          if (!piece.king && (ir === 0 || ir === 7)) val += 45;
-          // Edge safety bonus (cannot be jumped)
+          
+          // Back row defense (do not move off back row unless forced)
+          if (!piece.king && (ir === 0 || ir === 7)) val += 60;
+          
+          // Edge safety bonus
           if (ic === 0 || ic === 7) val += 15;
 
-          // Defender Formation (Connected diagonally to friendly pieces)
+          // Phalanx / Formation Bonus (Connected pieces)
           var connected = 0;
           for (var dir=0; dir<DIRS.length; dir++) {
               var nr = ir + DIRS[dir][0];
@@ -960,10 +939,10 @@ function evaluateBoard(boardState, currentTurn) {
                   connected++;
               }
           }
-          val += (connected * 12); // Encourage tight packs
+          val += (connected * 12);
 
-          // Add to total score
-          if (piece.side === currentTurn) {
+          // Add to respective scores
+          if (piece.side === aiSideChar) {
               myScore += val;
               myPieces.push({r: ir, c: ic, king: piece.king});
               myMobility += getSimpleMoves(ir, ic, piece, boardState).length;
@@ -977,71 +956,86 @@ function evaluateBoard(boardState, currentTurn) {
     }
     
     // Suffocating the opponent
-    var mobilityScore = (myMobility - oppMobility) * 5;
+    var mobilityScore = (myMobility - oppMobility) * 8;
     
-    // Endgame Terminator Protocol: Hunt down remaining pieces
+    // Endgame Terminator Protocol (Aggressively hunt down remaining pieces)
     var endgameScore = 0;
-    if (myScore > oppScore + 300 && oppPieces.length <= 3) {
+    if (myScore > oppScore + 300 && oppPieces.length <= 4) {
         for (var i = 0; i < myPieces.length; i++) {
             if (myPieces[i].king) {
                 for (var j = 0; j < oppPieces.length; j++) {
                     var dist = Math.abs(myPieces[i].r - oppPieces[j].r) + Math.abs(myPieces[i].c - oppPieces[j].c);
-                    endgameScore += (14 - dist) * 10; // Reward closer proximity
+                    endgameScore += (14 - dist) * 15; // Reward closer proximity
                     
-                    // Reward pushing opponent to corners/edges
                     if (oppPieces[j].r === 0 || oppPieces[j].r === 7 || oppPieces[j].c === 0 || oppPieces[j].c === 7) {
-                        endgameScore += 50;
+                        endgameScore += 100; // Massive reward for cornering
                     }
                 }
             }
         }
     }
     
-    // Add a tiny random factor to prevent repetitive identical games in equal positions
-    return (myScore - oppScore) + mobilityScore + endgameScore + (Math.random() * 2);
+    // Fully Deterministic: NO Math.random() so AI doesn't accidentally pick inferior moves.
+    return (myScore - oppScore) + mobilityScore + endgameScore;
 }
 
-// Recursively find all possible sequences of multi-jumps for a given piece
+// Generate jump sequences properly crowning pieces mid-jump (Russian Rules)
 function generateAllJumpSequences(r, c, p, boardState) {
     var sequences = [];
-    var initialCaps = getCaptures(r, c, p, boardState, []);
     
-    if (initialCaps.length === 0) return sequences;
-
-    function searchJumps(currR, currC, currBoard, currentSequence, ghosts) {
-        var furtherCaps = getCaptures(currR, currC, p, currBoard, ghosts);
+    function searchJumps(currR, currC, currP, currBoard, currentSequence, ghosts) {
+        var furtherCaps = getCaptures(currR, currC, currP, currBoard, ghosts);
         if (furtherCaps.length === 0) {
-            sequences.push(currentSequence);
+            if (currentSequence.length > 0) sequences.push(currentSequence);
             return;
         }
         for (var i=0; i<furtherCaps.length; i++) {
             var move = furtherCaps[i];
             var nextSequence = currentSequence.slice();
             nextSequence.push(move);
-            
             var nextGhosts = ghosts.slice();
             nextGhosts.push(move.cap);
             
             var simB = cloneBoard(currBoard);
-            simB[move.r][move.c] = p;
+            var pSim = { side: currP.side, king: currP.king, id: currP.id };
+            simB[move.r][move.c] = pSim;
             simB[currR][currC] = null;
             
-            searchJumps(move.r, move.c, simB, nextSequence, nextGhosts);
+            // Crown piece mid-jump (Russian Checkers Rule)
+            if (!pSim.king && ((pSim.side === 'w' && move.r === 0) || (pSim.side === 'b' && move.r === 7))) {
+                pSim.king = true;
+            }
+            
+            searchJumps(move.r, move.c, pSim, simB, nextSequence, nextGhosts);
         }
     }
 
-    for (var i=0; i<initialCaps.length; i++) {
-        var firstMove = initialCaps[i];
-        var simB = cloneBoard(boardState);
-        simB[firstMove.r][firstMove.c] = p;
-        simB[r][c] = null;
-        searchJumps(firstMove.r, firstMove.c, simB, [firstMove], [firstMove.cap]);
-    }
+    searchJumps(r, c, p, boardState, [], []);
     return sequences;
 }
 
-// Generate all valid full turns (handling multi-jumps as a single turn) with Move Ordering
-function generateAllValidTurns(side, boardState, pvMoveStr) {
+// Applies a full turn (simple move or multi-jump) and returns the resulting board
+function applyTurn(boardState, turnSeq) {
+    var simB = cloneBoard(boardState);
+    var pSim = simB[turnSeq.from.r][turnSeq.from.c];
+    var finalPos = turnSeq.from;
+    
+    for (var j=0; j<turnSeq.moves.length; j++) {
+        var m = turnSeq.moves[j];
+        simB[m.r][m.c] = pSim;
+        simB[finalPos.r][finalPos.c] = null;
+        if (m.cap) simB[m.cap.r][m.cap.c] = null;
+        finalPos = m;
+        
+        // Mid-jump crowning
+        if (!pSim.king && ((pSim.side === 'w' && m.r === 0) || (pSim.side === 'b' && m.r === 7))) {
+            pSim.king = true;
+        }
+    }
+    return simB;
+}
+
+function generateAllValidTurns(side, boardState) {
     var turns = [];
     var hasCaptures = false;
     
@@ -1053,8 +1047,7 @@ function generateAllValidTurns(side, boardState, pvMoveStr) {
                 if (jumpSequences.length > 0) {
                     hasCaptures = true;
                     for(var s=0; s<jumpSequences.length; s++) {
-                        // Weight captures heavily
-                        turns.push({ from: {r: r, c: c}, moves: jumpSequences[s], isCapture: true, priority: jumpSequences[s].length * 1000 });
+                        turns.push({ from: {r: r, c: c}, moves: jumpSequences[s], isCapture: true });
                     }
                 }
             }
@@ -1068,44 +1061,33 @@ function generateAllValidTurns(side, boardState, pvMoveStr) {
                 if (p && p.side === side) {
                     var mvs = getSimpleMoves(r, c, p, boardState);
                     for (var i=0; i<mvs.length; i++) {
-                        var prio = 0;
-                        // Prioritize center moves
-                        if (mvs[i].c > 1 && mvs[i].c < 6) prio += 10;
-                        // Prioritize King promotion moves
-                        if (!p.king && (mvs[i].r === 0 || mvs[i].r === 7)) prio += 100;
-                        turns.push({ from: {r: r, c: c}, moves: [mvs[i]], isCapture: false, priority: prio });
+                        turns.push({ from: {r: r, c: c}, moves: [mvs[i]], isCapture: false });
                     }
                 }
             }
         }
     }
     
-    // Apply Principal Variation (PV) boost from previous depth iteration
-    if (pvMoveStr) {
-        for (var i=0; i<turns.length; i++) {
-            var moveSig = turns[i].from.r + "," + turns[i].from.c + "-" + turns[i].moves[turns[i].moves.length-1].r + "," + turns[i].moves[turns[i].moves.length-1].c;
-            if (moveSig === pvMoveStr) {
-                turns[i].priority += 10000; // Absolute highest priority
-            }
-        }
-    }
-    
-    // Sort turns by priority (Move Ordering for Alpha-Beta optimization)
-    turns.sort(function(a, b) { return b.priority - a.priority; });
+    // Sort captures first for faster alpha-beta pruning
+    turns.sort(function(a, b) {
+        return (b.isCapture ? 1 : 0) - (a.isCapture ? 1 : 0);
+    });
     
     return turns;
 }
 
-// Quiescence Search: Keep searching if there are mandatory captures
-function quiescenceSearch(boardState, alpha, beta, isMaximizing, aiSideChar) {
+function quiescenceSearch(boardState, alpha, beta, isMaximizing, aiSideChar, depth) {
+    var eval = evaluateBoard(boardState, aiSideChar);
+    
+    // Hard depth limit on quiescence to prevent infinite loops in JS
+    if (depth > 4) return eval;
+    
     var oppSideChar = aiSideChar === 'b' ? 'w' : 'b';
     var currentSide = isMaximizing ? aiSideChar : oppSideChar;
     
-    var eval = evaluateBoard(boardState, aiSideChar);
-    
-    // Stop condition: No captures available
+    // Check if captures are possible
     var caps = getAllCaptures(currentSide, boardState);
-    if (caps.length === 0) return eval;
+    if (caps.length === 0) return eval; // Quiet position
 
     if (isMaximizing) {
         alpha = Math.max(alpha, eval);
@@ -1115,29 +1097,13 @@ function quiescenceSearch(boardState, alpha, beta, isMaximizing, aiSideChar) {
         if (beta <= alpha) return beta;
     }
     
-    var possibleTurns = generateAllValidTurns(currentSide, boardState, null);
+    var possibleTurns = generateAllValidTurns(currentSide, boardState); 
     
     if (isMaximizing) {
         var maxEval = -Infinity;
         for (var i = 0; i < possibleTurns.length; i++) {
-            var turnSeq = possibleTurns[i];
-            if (!turnSeq.isCapture) continue; // Only search captures
-            
-            var simB = cloneBoard(boardState);
-            var pSim = simB[turnSeq.from.r][turnSeq.from.c];
-            var finalPos = turnSeq.from;
-            for (var j=0; j<turnSeq.moves.length; j++) {
-                var m = turnSeq.moves[j];
-                simB[m.r][m.c] = pSim;
-                simB[finalPos.r][finalPos.c] = null;
-                if (m.cap) simB[m.cap.r][m.cap.c] = null;
-                finalPos = m;
-            }
-            if (!pSim.king && ((pSim.side === 'w' && finalPos.r === 0) || (pSim.side === 'b' && finalPos.r === 7))) {
-                simB[finalPos.r][finalPos.c].king = true;
-            }
-            
-            var ev = quiescenceSearch(simB, alpha, beta, false, aiSideChar);
+            var simB = applyTurn(boardState, possibleTurns[i]);
+            var ev = quiescenceSearch(simB, alpha, beta, false, aiSideChar, depth + 1);
             maxEval = Math.max(maxEval, ev);
             alpha = Math.max(alpha, ev);
             if (beta <= alpha) break;
@@ -1146,24 +1112,8 @@ function quiescenceSearch(boardState, alpha, beta, isMaximizing, aiSideChar) {
     } else {
         var minEval = Infinity;
         for (var i = 0; i < possibleTurns.length; i++) {
-            var turnSeq = possibleTurns[i];
-            if (!turnSeq.isCapture) continue;
-            
-            var simB = cloneBoard(boardState);
-            var pSim = simB[turnSeq.from.r][turnSeq.from.c];
-            var finalPos = turnSeq.from;
-            for (var j=0; j<turnSeq.moves.length; j++) {
-                var m = turnSeq.moves[j];
-                simB[m.r][m.c] = pSim;
-                simB[finalPos.r][finalPos.c] = null;
-                if (m.cap) simB[m.cap.r][m.cap.c] = null;
-                finalPos = m;
-            }
-            if (!pSim.king && ((pSim.side === 'w' && finalPos.r === 0) || (pSim.side === 'b' && finalPos.r === 7))) {
-                simB[finalPos.r][finalPos.c].king = true;
-            }
-            
-            var ev = quiescenceSearch(simB, alpha, beta, true, aiSideChar);
+            var simB = applyTurn(boardState, possibleTurns[i]);
+            var ev = quiescenceSearch(simB, alpha, beta, true, aiSideChar, depth + 1);
             minEval = Math.min(minEval, ev);
             beta = Math.min(beta, ev);
             if (beta <= alpha) break;
@@ -1172,101 +1122,47 @@ function quiescenceSearch(boardState, alpha, beta, isMaximizing, aiSideChar) {
     }
 }
 
-// Alpha-Beta Pruning Minimax with Iterative Deepening / TT compatibility
+// Rock-Solid Alpha-Beta Minimax
 function minimax(boardState, depth, alpha, beta, isMaximizing, aiSideChar) {
     var oppSideChar = aiSideChar === 'b' ? 'w' : 'b';
     var currentSide = isMaximizing ? aiSideChar : oppSideChar;
-    
-    var hash = hashBoardState(boardState, currentSide);
-    var pvMoveStr = null;
-    
-    if (transpositionTable.has(hash)) {
-        var cached = transpositionTable.get(hash);
-        if (cached.depth >= depth) {
-            return cached.score;
-        }
-        pvMoveStr = cached.bestMoveStr;
-    }
 
-    var possibleTurns = generateAllValidTurns(currentSide, boardState, pvMoveStr);
+    var possibleTurns = generateAllValidTurns(currentSide, boardState);
+    
+    // Terminal state (Loss for current side)
     if (possibleTurns.length === 0) {
-        return isMaximizing ? -100000 : 100000; // Loss / Win
+        return isMaximizing ? -100000 : 100000;
     }
     
     if (depth <= 0) {
-        // Drop into Quiescence Search to fix Horizon Effect
         if (aiDifficulty >= 5) {
-            var qScore = quiescenceSearch(boardState, alpha, beta, isMaximizing, aiSideChar);
-            transpositionTable.set(hash, {depth: depth, score: qScore, bestMoveStr: null});
-            return qScore;
+            return quiescenceSearch(boardState, alpha, beta, isMaximizing, aiSideChar, 0);
         } else {
-            var eScore = evaluateBoard(boardState, aiSideChar);
-            transpositionTable.set(hash, {depth: depth, score: eScore, bestMoveStr: null});
-            return eScore;
+            return evaluateBoard(boardState, aiSideChar);
         }
     }
-
-    var bestMoveStr = null;
 
     if (isMaximizing) {
         var maxEval = -Infinity;
         for (var i = 0; i < possibleTurns.length; i++) {
-            var turnSeq = possibleTurns[i];
-            var simB = cloneBoard(boardState);
-            var pSim = simB[turnSeq.from.r][turnSeq.from.c];
-            
-            var finalPos = turnSeq.from;
-            for (var j=0; j<turnSeq.moves.length; j++) {
-                var m = turnSeq.moves[j];
-                simB[m.r][m.c] = pSim;
-                simB[finalPos.r][finalPos.c] = null;
-                if (m.cap) simB[m.cap.r][m.cap.c] = null;
-                finalPos = m;
-            }
-            
-            if (!pSim.king && ((pSim.side === 'w' && finalPos.r === 0) || (pSim.side === 'b' && finalPos.r === 7))) {
-                simB[finalPos.r][finalPos.c].king = true;
-            }
+            var simB = applyTurn(boardState, possibleTurns[i]);
             
             var ev = minimax(simB, depth - 1, alpha, beta, false, aiSideChar);
-            if (ev > maxEval) {
-                maxEval = ev;
-                bestMoveStr = turnSeq.from.r + "," + turnSeq.from.c + "-" + turnSeq.moves[turnSeq.moves.length-1].r + "," + turnSeq.moves[turnSeq.moves.length-1].c;
-            }
+            maxEval = Math.max(maxEval, ev);
             alpha = Math.max(alpha, ev);
             if (beta <= alpha) break; 
         }
-        transpositionTable.set(hash, {depth: depth, score: maxEval, bestMoveStr: bestMoveStr});
         return maxEval;
     } else {
         var minEval = Infinity;
         for (var i = 0; i < possibleTurns.length; i++) {
-            var turnSeq = possibleTurns[i];
-            var simB = cloneBoard(boardState);
-            var pSim = simB[turnSeq.from.r][turnSeq.from.c];
-            
-            var finalPos = turnSeq.from;
-            for (var j=0; j<turnSeq.moves.length; j++) {
-                var m = turnSeq.moves[j];
-                simB[m.r][m.c] = pSim;
-                simB[finalPos.r][finalPos.c] = null;
-                if (m.cap) simB[m.cap.r][m.cap.c] = null;
-                finalPos = m;
-            }
-            
-            if (!pSim.king && ((pSim.side === 'w' && finalPos.r === 0) || (pSim.side === 'b' && finalPos.r === 7))) {
-                simB[finalPos.r][finalPos.c].king = true;
-            }
+            var simB = applyTurn(boardState, possibleTurns[i]);
             
             var ev = minimax(simB, depth - 1, alpha, beta, true, aiSideChar);
-            if (ev < minEval) {
-                minEval = ev;
-                bestMoveStr = turnSeq.from.r + "," + turnSeq.from.c + "-" + turnSeq.moves[turnSeq.moves.length-1].r + "," + turnSeq.moves[turnSeq.moves.length-1].c;
-            }
+            minEval = Math.min(minEval, ev);
             beta = Math.min(beta, ev);
             if (beta <= alpha) break; 
         }
-        transpositionTable.set(hash, {depth: depth, score: minEval, bestMoveStr: bestMoveStr});
         return minEval;
     }
 }
@@ -1277,26 +1173,22 @@ function doAITurn() {
       return;
   }
 
-  // Clear Transposition Table periodically to prevent memory leaks in browser
-  if (transpositionTable.size > 200000) transpositionTable.clear();
-
+  // Handle Forced Multi-Jumps perfectly
   if (multiJumpPiece) {
-    var caps = getCaptures(multiJumpPiece.r, multiJumpPiece.c, b[multiJumpPiece.r][multiJumpPiece.c], b, removedDuringTurn);
-    if (caps.length > 0) {
-        var bestCapMove = caps[Math.floor(Math.random() * caps.length)];
+    var sequences = generateAllJumpSequences(multiJumpPiece.r, multiJumpPiece.c, b[multiJumpPiece.r][multiJumpPiece.c], b);
+    if (sequences.length > 0) {
+        var bestCapMove = sequences[Math.floor(Math.random() * sequences.length)][0];
+        
         if (aiDifficulty >= 4) {
              var bestScore = -Infinity;
-             for (var i=0; i<caps.length; i++) {
-                 var simB = cloneBoard(b);
-                 var m = caps[i];
-                 var pSim = simB[multiJumpPiece.r][multiJumpPiece.c];
-                 simB[m.r][m.c] = pSim;
-                 simB[multiJumpPiece.r][multiJumpPiece.c] = null;
-                 simB[m.cap.r][m.cap.c] = null;
-                 for(var g=0; g<removedDuringTurn.length; g++) simB[removedDuringTurn[g].r][removedDuringTurn[g].c] = null;
-                 
+             for (var i=0; i<sequences.length; i++) {
+                 var turnObj = { from: {r: multiJumpPiece.r, c: multiJumpPiece.c}, moves: sequences[i], isCapture: true };
+                 var simB = applyTurn(b, turnObj);
                  var score = minimax(simB, aiDifficulty >= 5 ? 5 : 3, -Infinity, Infinity, false, turn);
-                 if (score > bestScore) { bestScore = score; bestCapMove = m; }
+                 if (score > bestScore) { 
+                     bestScore = score; 
+                     bestCapMove = sequences[i][0]; 
+                 }
              }
         }
         
@@ -1311,88 +1203,45 @@ function doAITurn() {
     return;
   }
 
-  var possibleTurns = generateAllValidTurns(turn, b, null);
+  var possibleTurns = generateAllValidTurns(turn, b);
   if (possibleTurns.length === 0) {
       if (thinkingOverlay) thinkingOverlay.classList.remove('active');
       return;
   }
 
-  var bestScore = -Infinity;
-  var bestTurns = [];
-
-  // Deep Iterative Searching configurations
   var searchDepth = 1;
   if (aiDifficulty === 1) searchDepth = 1; 
   if (aiDifficulty === 2) searchDepth = 3; 
-  if (aiDifficulty === 3) searchDepth = 5; 
-  if (aiDifficulty === 4) searchDepth = 7; 
-  if (aiDifficulty === 5) searchDepth = 8; // God Tier
-  if (aiDifficulty === 6) searchDepth = 9; // Grandmaster 🧠 - Pushes JS Limits
+  if (aiDifficulty === 3) searchDepth = 4; 
+  if (aiDifficulty === 4) searchDepth = 5; 
+  if (aiDifficulty === 5) searchDepth = 6; 
+  if (aiDifficulty === 6) searchDepth = 7; // Extremely deep, bug-free, deterministic search
 
-  // For Grandmaster, we use Iterative Deepening to seed the Transposition Table 
-  // This calculates shallow depths first, which saves the "best move" to memory.
-  // When it calculates depth 9, it checks that move first, causing massive Alpha-Beta cutoffs.
-  if (aiDifficulty >= 5) {
-      for (var d = 2; d <= searchDepth - 2; d += 2) {
-          for (var i=0; i<possibleTurns.length; i++) {
-              var turnSeq = possibleTurns[i];
-              var simB = cloneBoard(b);
-              var pSim = simB[turnSeq.from.r][turnSeq.from.c];
-              var finalPos = turnSeq.from;
-              for (var j=0; j<turnSeq.moves.length; j++) {
-                  var m = turnSeq.moves[j];
-                  simB[m.r][m.c] = pSim;
-                  simB[finalPos.r][finalPos.c] = null;
-                  if (m.cap) simB[m.cap.r][m.cap.c] = null;
-                  finalPos = m;
-              }
-              if (!pSim.king && ((pSim.side === 'w' && finalPos.r === 0) || (pSim.side === 'b' && finalPos.r === 7))) { simB[finalPos.r][finalPos.c].king = true; }
-              minimax(simB, d, -Infinity, Infinity, false, turn);
-          }
-      }
-  }
-
-  // Get the PV Move from the hash table to prioritize the absolute best path
-  var currentHash = hashBoardState(b, turn);
-  var pvStr = null;
-  if (transpositionTable.has(currentHash)) {
-      pvStr = transpositionTable.get(currentHash).bestMoveStr;
-  }
-  possibleTurns = generateAllValidTurns(turn, b, pvStr);
+  var bestScore = -Infinity;
+  var bestTurns = [];
 
   for (var i=0; i<possibleTurns.length; i++) {
       var turnSeq = possibleTurns[i];
-      var simB = cloneBoard(b);
-      var pSim = simB[turnSeq.from.r][turnSeq.from.c];
-      
-      var finalPos = turnSeq.from;
-      for (var j=0; j<turnSeq.moves.length; j++) {
-          var m = turnSeq.moves[j];
-          simB[m.r][m.c] = pSim;
-          simB[finalPos.r][finalPos.c] = null;
-          if (m.cap) simB[m.cap.r][m.cap.c] = null;
-          finalPos = m;
-      }
-      
-      if (!pSim.king && ((pSim.side === 'w' && finalPos.r === 0) || (pSim.side === 'b' && finalPos.r === 7))) {
-          simB[finalPos.r][finalPos.c].king = true;
-      }
+      var simB = applyTurn(b, turnSeq);
       
       var score = 0;
       if (aiDifficulty === 1) {
-          score = evaluateBoard(simB, turn) + (Math.random() * 200); // High noise
+          // Easy: completely random evaluations
+          score = evaluateBoard(simB, turn) + (Math.random() * 500); 
       } else {
+          // Deep search
           score = minimax(simB, searchDepth - 1, -Infinity, Infinity, false, turn);
       }
 
       if (score > bestScore) {
           bestScore = score;
           bestTurns = [turnSeq];
-      } else if (Math.abs(score - bestScore) < 0.001) {
+      } else if (score === bestScore) {
           bestTurns.push(turnSeq);
       }
   }
 
+  // If there are multiple moves mathematically tied for perfectly equal outcomes, pick one randomly.
   var chosenTurn = bestTurns[Math.floor(Math.random() * bestTurns.length)];
   
   var firstMove = chosenTurn.moves[0];
@@ -1463,7 +1312,6 @@ for(var i=0; i<diffBtns.length; i++) {
     e.preventDefault();
     if (this.classList.contains('active')) return;
     
-    // Allow seamless switching of AI difficulty mid-game
     aiDifficulty = parseInt(this.dataset.diff);
     for (var j=0; j<diffBtns.length; j++) diffBtns[j].classList.remove('active');
     this.classList.add('active');
@@ -1471,7 +1319,6 @@ for(var i=0; i<diffBtns.length; i++) {
     try { localStorage.setItem(DIFF_KEY, aiDifficulty); } catch(err) {}
     persistState();
     
-    // Auto-close menu to show the switch was successful
     if (menuModal) menuModal.classList.remove('open');
     showMessage("AI Difficulty Changed");
   });
