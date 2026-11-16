@@ -184,7 +184,7 @@
             <div class="turn-clock"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#fff" stroke-width="2.5"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg></div>
         </div>
         <div class="player-details">
-            <span class="player-title" id="title-b">Player 2</span>
+            <span class="player-title" id="title-b">Computer (Black)</span>
             <span class="player-sub" id="sub-b">Waiting...</span>
         </div>
         </div>
@@ -210,8 +210,8 @@
             <div class="turn-clock"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#fff" stroke-width="2.5"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg></div>
         </div>
         <div class="player-details">
-            <span class="player-title">Player 1</span>
-            <span class="player-sub" id="sub-w">Your Turn</span>
+            <span class="player-title" id="title-w">Gemini (White)</span>
+            <span class="player-sub" id="sub-w">Thinking...</span>
         </div>
         </div>
         <div class="score-pill">
@@ -233,7 +233,7 @@
 <div class="modal-backdrop" id="menu-modal">
   <div class="menu-card">
     <h2 class="menu-header">Game Menu</h2>
-    <div class="menu-sub" id="menu-status">Player 1's Turn</div>
+    <div class="menu-sub" id="menu-status">Gemini (White) Turn</div>
 
     <button class="menu-btn resume" id="btn-resume">▶ Resume Game</button>
     <button class="menu-btn restart" id="btn-restart">↻ Restart Game</button>
@@ -256,8 +256,9 @@
 
     <h3 style="color:#fff; margin: 10px 0 0 0; font-size:1rem; text-align:center;">Game Mode</h3>
     <div class="mode-selector">
-      <button class="mode-btn active" data-mode="1">🤖 1 Player</button>
+      <button class="mode-btn" data-mode="1">🤖 1 Player</button>
       <button class="mode-btn" data-mode="2">👥 2 Players</button>
+      <button class="mode-btn active" data-mode="3">🌌 Gemini vs AI</button>
     </div>
 
     <h3 style="color:#fff; margin: 10px 0 0 0; font-size:1rem; text-align:center;">Theme</h3>
@@ -328,6 +329,7 @@ var panelW = document.getElementById('panel-w');
 var panelB = document.getElementById('panel-b');
 var subW = document.getElementById('sub-w');
 var subB = document.getElementById('sub-b');
+var titleW = document.getElementById('title-w');
 var titleB = document.getElementById('title-b');
 var countW = document.getElementById('count-w');
 var countB = document.getElementById('count-b');
@@ -385,6 +387,7 @@ var pieceIdCounter = 0;
 var halfMoveClock = 0;
 
 var isVsAI = true;
+var isGeminiVsAI = true; 
 var aiSide = 'b';
 var aiMoveTimeout = null;
 var currentRuleset = 'russian';
@@ -437,8 +440,8 @@ function persistState() {
         b: b, turn: turn, lastMove: lastMove, historyStack: historyStack, 
         gameOver: gameOver, multiJumpPiece: multiJumpPiece, 
         removedDuringTurn: removedDuringTurn, pieceIdCounter: pieceIdCounter, 
-        halfMoveClock: halfMoveClock, isVsAI: isVsAI, currentRuleset: currentRuleset,
-        aiDifficulty: aiDifficulty
+        halfMoveClock: halfMoveClock, isVsAI: isVsAI, isGeminiVsAI: isGeminiVsAI, 
+        currentRuleset: currentRuleset, aiDifficulty: aiDifficulty
       }));
   } catch (e) {}
 }
@@ -483,6 +486,7 @@ function loadState() {
           gameOver = parsed.gameOver; multiJumpPiece = parsed.multiJumpPiece; removedDuringTurn = parsed.removedDuringTurn || [];
           pieceIdCounter = parsed.pieceIdCounter || 100; halfMoveClock = parsed.halfMoveClock || 0;
           isVsAI = parsed.isVsAI !== undefined ? parsed.isVsAI : true;
+          isGeminiVsAI = parsed.isGeminiVsAI !== undefined ? parsed.isGeminiVsAI : true;
           currentRuleset = parsed.currentRuleset || 'russian';
           aiDifficulty = parsed.aiDifficulty || 6;
           updateMenuUI();
@@ -494,11 +498,13 @@ function loadState() {
 }
 
 function updateMenuUI() {
-  if (titleB) titleB.textContent = isVsAI ? "Computer (Black)" : "Player 2 (Black)";
+  if (titleB) titleB.textContent = (isVsAI || isGeminiVsAI) ? "Computer (Black)" : "Player 2 (Black)";
+  if (titleW) titleW.textContent = isGeminiVsAI ? "Gemini (White)" : "Player 1 (White)";
   
   var modeBtns = document.querySelectorAll('.mode-btn');
   for(var i=0; i<modeBtns.length; i++) {
-    if (modeBtns[i].dataset.mode === (isVsAI ? '1' : '2')) {
+    var expectedMode = isGeminiVsAI ? '3' : (isVsAI ? '1' : '2');
+    if (modeBtns[i].dataset.mode === expectedMode) {
         modeBtns[i].classList.add('active');
     } else {
         modeBtns[i].classList.remove('active');
@@ -663,7 +669,12 @@ function showMessage(text) {
 function handleTap(r, c, fromAI) {
   if (fromAI === undefined) fromAI = false;
   if (gameOver) return;
-  if (isVsAI && turn === aiSide && !fromAI) return;
+  
+  // Block human taps during AI turns
+  if (!fromAI) {
+      if (isGeminiVsAI && turn === 'w') return;
+      if (isVsAI && turn === aiSide) return;
+  }
 
   if (selected) {
     var dest = null;
@@ -762,7 +773,7 @@ function checkGameOver() {
 
   if (oppPieces === 0 || (oppCaps.length === 0 && !oppSimple)) {
     gameOver = true;
-    var winner = turn === 'w' ? (isVsAI ? 'Computer (Black)' : 'Player 2 (Black)') : 'Player 1 (White)';
+    var winner = turn === 'w' ? ((isVsAI || isGeminiVsAI) ? 'Computer (Black)' : 'Player 2 (Black)') : (isGeminiVsAI ? 'Gemini (White)' : 'Player 1 (White)');
     showMessage('🏆 ' + winner + ' Wins!');
     playSound('thud');
     persistState();
@@ -797,7 +808,9 @@ function render() {
       }
       var p = b[r][c];
       if (!gameOver && p && p.side === turn && !multiJumpPiece) {
-        if (!isVsAI || turn !== aiSide) {
+        // Only show valid targets to the human player
+        var hideValidTargets = (isGeminiVsAI && turn === 'w') || (isVsAI && turn === aiSide);
+        if (!hideValidTargets) {
             if (allCaps.length > 0) { if (capCoords[r + ',' + c]) cell.classList.add('movable', 'movable-cap'); } 
             else if (getSimpleMoves(r, c, p, b).length > 0) cell.classList.add('movable');
         }
@@ -854,21 +867,21 @@ function render() {
   if (turn === 'w') {
     if (panelW) panelW.classList.add('active-turn'); 
     if (panelB) panelB.classList.remove('active-turn');
-    if (subW) subW.textContent = allCaps.length > 0 ? "Must Capture!" : "Your Turn"; 
+    if (subW) subW.textContent = allCaps.length > 0 ? "Must Capture!" : (isGeminiVsAI ? "Thinking..." : "Your Turn"); 
     if (subB) subB.textContent = "Waiting...";
-    if (menuStatus) menuStatus.textContent = "Current Turn: Player 1 (White)";
+    if (menuStatus) menuStatus.textContent = "Current Turn: " + (isGeminiVsAI ? "Gemini (White)" : "Player 1 (White)");
   } else {
     if (panelB) panelB.classList.add('active-turn'); 
     if (panelW) panelW.classList.remove('active-turn');
     if (subB) subB.textContent = allCaps.length > 0 ? "Must Capture!" : (isVsAI ? "Thinking..." : "Your Turn"); 
     if (subW) subW.textContent = "Waiting...";
-    if (menuStatus) menuStatus.textContent = "Current Turn: " + (isVsAI ? "Computer (Black)" : "Player 2 (Black)");
+    if (menuStatus) menuStatus.textContent = "Current Turn: " + ((isVsAI || isGeminiVsAI) ? "Computer (Black)" : "Player 2 (Black)");
   }
 }
 
 function triggerAIIfNeeded() {
     clearTimeout(aiMoveTimeout);
-    if (isVsAI && turn === aiSide && !gameOver) {
+    if (!gameOver && ((isVsAI && turn === aiSide) || (isGeminiVsAI && turn === 'w'))) {
         if (thinkingOverlay) thinkingOverlay.classList.add('active'); 
         aiMoveTimeout = setTimeout(function() {
              requestAnimationFrame(function() {
@@ -881,8 +894,6 @@ function triggerAIIfNeeded() {
 // ----------------------------------------------------
 // TRUE GRANDMASTER AI LOGIC (Bug-free, Deterministic)
 // ----------------------------------------------------
-
-// Evaluate board strictly from the AI's perspective (aiSideChar)
 function evaluateBoard(boardState, aiSideChar) {
     var myScore = 0;
     var oppScore = 0;
@@ -899,11 +910,9 @@ function evaluateBoard(boardState, aiSideChar) {
           var val = piece.king ? 1000 : 100;
           
           if (!piece.king) {
-              // Advancing adds compounding value
               var advancement = (piece.side === 'b' ? ir : (7 - ir));
               val += (advancement * advancement * 1.5);
               
-              // Runaway Checker Detection (No enemies in front)
               var isRunaway = true;
               var forwardDir = (piece.side === 'b') ? 1 : -1;
               for (var scanR = ir + forwardDir; scanR >= 0 && scanR < 8; scanR += forwardDir) {
@@ -917,20 +926,13 @@ function evaluateBoard(boardState, aiSideChar) {
               }
               if (isRunaway && advancement > 3) val += 300; 
           } else {
-              // King Centralization
               if (ic > 2 && ic < 5 && ir > 2 && ir < 5) val += 50;
           }
           
-          // Center control bonus
           if (ic > 1 && ic < 6 && ir > 1 && ir < 6) val += 20;
-          
-          // Back row defense (do not move off back row unless forced)
           if (!piece.king && (ir === 0 || ir === 7)) val += 60;
-          
-          // Edge safety bonus
           if (ic === 0 || ic === 7) val += 15;
 
-          // Phalanx / Formation Bonus (Connected pieces)
           var connected = 0;
           for (var dir=0; dir<DIRS.length; dir++) {
               var nr = ir + DIRS[dir][0];
@@ -941,7 +943,6 @@ function evaluateBoard(boardState, aiSideChar) {
           }
           val += (connected * 12);
 
-          // Add to respective scores
           if (piece.side === aiSideChar) {
               myScore += val;
               myPieces.push({r: ir, c: ic, king: piece.king});
@@ -955,31 +956,26 @@ function evaluateBoard(boardState, aiSideChar) {
       }
     }
     
-    // Suffocating the opponent
     var mobilityScore = (myMobility - oppMobility) * 8;
-    
-    // Endgame Terminator Protocol (Aggressively hunt down remaining pieces)
     var endgameScore = 0;
     if (myScore > oppScore + 300 && oppPieces.length <= 4) {
         for (var i = 0; i < myPieces.length; i++) {
             if (myPieces[i].king) {
                 for (var j = 0; j < oppPieces.length; j++) {
                     var dist = Math.abs(myPieces[i].r - oppPieces[j].r) + Math.abs(myPieces[i].c - oppPieces[j].c);
-                    endgameScore += (14 - dist) * 15; // Reward closer proximity
+                    endgameScore += (14 - dist) * 15; 
                     
                     if (oppPieces[j].r === 0 || oppPieces[j].r === 7 || oppPieces[j].c === 0 || oppPieces[j].c === 7) {
-                        endgameScore += 100; // Massive reward for cornering
+                        endgameScore += 100; 
                     }
                 }
             }
         }
     }
     
-    // Fully Deterministic: NO Math.random() so AI doesn't accidentally pick inferior moves.
     return (myScore - oppScore) + mobilityScore + endgameScore;
 }
 
-// Generate jump sequences properly crowning pieces mid-jump (Russian Rules)
 function generateAllJumpSequences(r, c, p, boardState) {
     var sequences = [];
     
@@ -1001,7 +997,6 @@ function generateAllJumpSequences(r, c, p, boardState) {
             simB[move.r][move.c] = pSim;
             simB[currR][currC] = null;
             
-            // Crown piece mid-jump (Russian Checkers Rule)
             if (!pSim.king && ((pSim.side === 'w' && move.r === 0) || (pSim.side === 'b' && move.r === 7))) {
                 pSim.king = true;
             }
@@ -1014,7 +1009,6 @@ function generateAllJumpSequences(r, c, p, boardState) {
     return sequences;
 }
 
-// Applies a full turn (simple move or multi-jump) and returns the resulting board
 function applyTurn(boardState, turnSeq) {
     var simB = cloneBoard(boardState);
     var pSim = simB[turnSeq.from.r][turnSeq.from.c];
@@ -1027,7 +1021,6 @@ function applyTurn(boardState, turnSeq) {
         if (m.cap) simB[m.cap.r][m.cap.c] = null;
         finalPos = m;
         
-        // Mid-jump crowning
         if (!pSim.king && ((pSim.side === 'w' && m.r === 0) || (pSim.side === 'b' && m.r === 7))) {
             pSim.king = true;
         }
@@ -1068,7 +1061,6 @@ function generateAllValidTurns(side, boardState) {
         }
     }
     
-    // Sort captures first for faster alpha-beta pruning
     turns.sort(function(a, b) {
         return (b.isCapture ? 1 : 0) - (a.isCapture ? 1 : 0);
     });
@@ -1078,16 +1070,13 @@ function generateAllValidTurns(side, boardState) {
 
 function quiescenceSearch(boardState, alpha, beta, isMaximizing, aiSideChar, depth) {
     var eval = evaluateBoard(boardState, aiSideChar);
-    
-    // Hard depth limit on quiescence to prevent infinite loops in JS
     if (depth > 4) return eval;
     
     var oppSideChar = aiSideChar === 'b' ? 'w' : 'b';
     var currentSide = isMaximizing ? aiSideChar : oppSideChar;
     
-    // Check if captures are possible
     var caps = getAllCaptures(currentSide, boardState);
-    if (caps.length === 0) return eval; // Quiet position
+    if (caps.length === 0) return eval; 
 
     if (isMaximizing) {
         alpha = Math.max(alpha, eval);
@@ -1122,14 +1111,11 @@ function quiescenceSearch(boardState, alpha, beta, isMaximizing, aiSideChar, dep
     }
 }
 
-// Rock-Solid Alpha-Beta Minimax
 function minimax(boardState, depth, alpha, beta, isMaximizing, aiSideChar) {
     var oppSideChar = aiSideChar === 'b' ? 'w' : 'b';
     var currentSide = isMaximizing ? aiSideChar : oppSideChar;
-
     var possibleTurns = generateAllValidTurns(currentSide, boardState);
     
-    // Terminal state (Loss for current side)
     if (possibleTurns.length === 0) {
         return isMaximizing ? -100000 : 100000;
     }
@@ -1146,7 +1132,6 @@ function minimax(boardState, depth, alpha, beta, isMaximizing, aiSideChar) {
         var maxEval = -Infinity;
         for (var i = 0; i < possibleTurns.length; i++) {
             var simB = applyTurn(boardState, possibleTurns[i]);
-            
             var ev = minimax(simB, depth - 1, alpha, beta, false, aiSideChar);
             maxEval = Math.max(maxEval, ev);
             alpha = Math.max(alpha, ev);
@@ -1157,7 +1142,6 @@ function minimax(boardState, depth, alpha, beta, isMaximizing, aiSideChar) {
         var minEval = Infinity;
         for (var i = 0; i < possibleTurns.length; i++) {
             var simB = applyTurn(boardState, possibleTurns[i]);
-            
             var ev = minimax(simB, depth - 1, alpha, beta, true, aiSideChar);
             minEval = Math.min(minEval, ev);
             beta = Math.min(beta, ev);
@@ -1167,13 +1151,52 @@ function minimax(boardState, depth, alpha, beta, isMaximizing, aiSideChar) {
     }
 }
 
-function doAITurn() {
-  if (gameOver || turn !== aiSide) {
+// ==========================================
+// GEMINI API INTEGRATION
+// ==========================================
+async function fetchGeminiMove(possibleTurns, boardState) {
+    const apiKey = 'AQ.Ab8RN6LwaNsQFIYXFyNfpAE3gpLTZllrqm6xpgfK3_WOCmwDog';
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+
+    // Simplify board for LLM spatial reasoning (removes heavy JSON)
+    let simpleBoard = boardState.map(row => row.map(cell => cell ? (cell.side + (cell.king ? 'K' : '')) : '-'));
+    
+    let promptStr = `You are playing Russian Checkers as White ('w').
+Opponent is Black ('b'). Kings have 'K' appended. Empty squares are '-'.
+Row 0 is Top, Row 7 is Bottom.
+Current Board Array:
+${JSON.stringify(simpleBoard)}
+
+Your valid moves array (each move contains a 'from' coordinate and a 'moves' destination array):
+${JSON.stringify(possibleTurns)}
+
+Analyze the board and choose the best tactical move from the valid moves array.
+Reply ONLY with a single integer representing the array index (0 to ${possibleTurns.length - 1}) of the move you choose. No other text.`;
+
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{ parts: [{ text: promptStr }] }],
+                generationConfig: { maxOutputTokens: 10, temperature: 0.1 }
+            })
+        });
+        const data = await response.json();
+        return parseInt(data.candidates[0].content.parts[0].text.trim());
+    } catch (error) {
+        console.error("Failed to connect to Gemini API:", error);
+        return -1;
+    }
+}
+
+async function doAITurn() {
+  if (gameOver) {
       if (thinkingOverlay) thinkingOverlay.classList.remove('active');
       return;
   }
 
-  // Handle Forced Multi-Jumps perfectly
+  // Handle Forced Multi-Jumps identically for Local AI and Gemini
   if (multiJumpPiece) {
     var sequences = generateAllJumpSequences(multiJumpPiece.r, multiJumpPiece.c, b[multiJumpPiece.r][multiJumpPiece.c], b);
     if (sequences.length > 0) {
@@ -1195,7 +1218,7 @@ function doAITurn() {
         handleTap(multiJumpPiece.r, multiJumpPiece.c, true);
         setTimeout(function() { 
             handleTap(bestCapMove.r, bestCapMove.c, true); 
-            if (thinkingOverlay) thinkingOverlay.classList.remove('active');
+            if (thinkingOverlay && !multiJumpPiece) thinkingOverlay.classList.remove('active');
         }, 350);
     } else {
         if (thinkingOverlay) thinkingOverlay.classList.remove('active');
@@ -1209,13 +1232,42 @@ function doAITurn() {
       return;
   }
 
+  // -------------------------
+  // GEMINI TURN LOGIC (WHITE)
+  // -------------------------
+  if (isGeminiVsAI && turn === 'w') {
+      var moveIndex = await fetchGeminiMove(possibleTurns, b);
+      
+      if (isNaN(moveIndex) || moveIndex < 0 || moveIndex >= possibleTurns.length) {
+          console.warn("Gemini returned invalid index, defaulting to first valid move.");
+          moveIndex = 0;
+      }
+      
+      var chosenTurn = possibleTurns[moveIndex];
+      var firstMove = chosenTurn.moves[0];
+      handleTap(chosenTurn.from.r, chosenTurn.from.c, true);
+      setTimeout(function() { 
+          handleTap(firstMove.r, firstMove.c, true); 
+          if (thinkingOverlay && !multiJumpPiece) thinkingOverlay.classList.remove('active');
+      }, 350);
+      return;
+  }
+
+  // -------------------------
+  // LOCAL AI LOGIC (BLACK)
+  // -------------------------
+  if (!isVsAI || turn !== aiSide) {
+      if (thinkingOverlay) thinkingOverlay.classList.remove('active');
+      return;
+  }
+
   var searchDepth = 1;
   if (aiDifficulty === 1) searchDepth = 1; 
   if (aiDifficulty === 2) searchDepth = 3; 
   if (aiDifficulty === 3) searchDepth = 4; 
   if (aiDifficulty === 4) searchDepth = 5; 
   if (aiDifficulty === 5) searchDepth = 6; 
-  if (aiDifficulty === 6) searchDepth = 7; // Extremely deep, bug-free, deterministic search
+  if (aiDifficulty === 6) searchDepth = 7; 
 
   var bestScore = -Infinity;
   var bestTurns = [];
@@ -1226,10 +1278,8 @@ function doAITurn() {
       
       var score = 0;
       if (aiDifficulty === 1) {
-          // Easy: completely random evaluations
           score = evaluateBoard(simB, turn) + (Math.random() * 500); 
       } else {
-          // Deep search
           score = minimax(simB, searchDepth - 1, -Infinity, Infinity, false, turn);
       }
 
@@ -1241,15 +1291,13 @@ function doAITurn() {
       }
   }
 
-  // If there are multiple moves mathematically tied for perfectly equal outcomes, pick one randomly.
   var chosenTurn = bestTurns[Math.floor(Math.random() * bestTurns.length)];
-  
   var firstMove = chosenTurn.moves[0];
   handleTap(chosenTurn.from.r, chosenTurn.from.c, true);
   
   setTimeout(function() { 
       handleTap(firstMove.r, firstMove.c, true); 
-      if (thinkingOverlay) thinkingOverlay.classList.remove('active');
+      if (thinkingOverlay && !multiJumpPiece) thinkingOverlay.classList.remove('active');
   }, 350);
 }
 
@@ -1257,7 +1305,7 @@ var btnUndo = document.getElementById('btn-undo');
 if (btnUndo) {
     btnUndo.addEventListener('pointerdown', function(e) {
       e.preventDefault();
-      if (isVsAI && turn === aiSide && !gameOver) return; 
+      if ((isVsAI || isGeminiVsAI) && (turn === aiSide || (isGeminiVsAI && turn === 'w')) && !gameOver) return; 
       if (gameOver) gameOver = false;
       if (multiJumpPiece) { multiJumpPiece = null; removedDuringTurn = []; } 
       else { 
@@ -1357,7 +1405,9 @@ for(var i=0; i<modeBtns.length; i++) {
     e.preventDefault();
     if (this.classList.contains('active')) return; 
     if (confirm("Switching game modes will restart the current match. Continue?")) {
-        isVsAI = this.dataset.mode === '1';
+        isVsAI = (this.dataset.mode === '1' || this.dataset.mode === '3');
+        isGeminiVsAI = this.dataset.mode === '3';
+        
         for (var j=0; j<modeBtns.length; j++) modeBtns[j].classList.remove('active');
         this.classList.add('active');
         if (menuModal) menuModal.classList.remove('open');
