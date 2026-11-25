@@ -42,8 +42,8 @@
     --sq-dark-img: none;
   }
 
-  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; touch-action: none; user-select: none; -webkit-user-select: none; }
-  html, body { margin: 0; padding: 0; width: 100%; height: 100%; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; overflow: hidden; position: fixed; inset: 0; background-color: var(--wood-table-1); color: var(--text-cream); transition: background 0.3s ease; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; -webkit-user-select: none; }
+  html, body { margin: 0; padding: 0; width: 100%; height: 100%; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; overflow: hidden; position: fixed; inset: 0; background-color: var(--wood-table-1); color: var(--text-cream); transition: background 0.3s ease; touch-action: none; }
   
   body:not(.theme-marble):not(.theme-classic) {
     background-image: repeating-linear-gradient(90deg, rgba(0,0,0,0.08) 0px, rgba(0,0,0,0.02) 2px, transparent 4px, transparent 42px, rgba(0,0,0,0.06) 44px), repeating-linear-gradient(90deg, rgba(255,190,120,0.04) 0px, rgba(0,0,0,0.07) 18px, rgba(255,190,120,0.03) 36px), radial-gradient(circle at 50% 50%, #6e3f20 0%, #3d200d 100%);
@@ -78,13 +78,13 @@
   .score-icon { width: 20px; height: 20px; }
   .score-num { font-size: 1.1rem; font-weight: 800; color: #fff; min-width: 20px; text-align: center; }
   
-  .board-frame { width: 100%; max-width: 98vmin; max-height: 98vmin; aspect-ratio: 1 / 1; background: var(--frame-outer); border: 3px solid var(--frame-border); border-radius: 8px; box-shadow: 0 15px 35px rgba(0,0,0,0.8), inset 0 2px 2px rgba(255,210,160,0.22), inset 0 -2px 3px rgba(0,0,0,0.8); display: grid; grid-template-columns: 16px 1fr 16px; grid-template-rows: 16px 1fr 16px; flex-shrink: 0; transition: background 0.3s ease, border-color 0.3s ease; margin: 4px 0; }
+  .board-frame { width: 100%; max-width: 98vmin; max-height: 98vmin; aspect-ratio: 1 / 1; background: var(--frame-outer); border: 3px solid var(--frame-border); border-radius: 8px; box-shadow: 0 15px 35px rgba(0,0,0,0.8), inset 0 2px 2px rgba(255,210,160,0.22), inset 0 -2px 3px rgba(0,0,0,0.8); display: grid; grid-template-columns: 16px 1fr 16px; grid-template-rows: 16px 1fr 16px; flex-shrink: 0; transition: background 0.3s ease, border-color 0.3s ease; margin: 4px 0; touch-action: none; }
   .coord-bar-h, .coord-bar-v { display: grid; align-items: center; justify-items: center; font-size: 0.65rem; font-weight: 800; color: var(--text-coord); text-shadow: 0 1px 1px #000; }
   .coord-bar-h { grid-template-columns: repeat(8, 1fr); }
   .coord-bar-v { grid-template-rows: repeat(8, 1fr); }
   
-  .board { display: grid; grid-template-columns: repeat(8, 1fr); grid-template-rows: repeat(8, 1fr); width: 100%; height: 100%; border: 3px solid #120802; box-shadow: inset 0 0 10px rgba(0,0,0,0.75); background: var(--sq-dark); position: relative; }
-  .cell { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; position: relative; }
+  .board { display: grid; grid-template-columns: repeat(8, 1fr); grid-template-rows: repeat(8, 1fr); width: 100%; height: 100%; border: 3px solid #120802; box-shadow: inset 0 0 10px rgba(0,0,0,0.75); background: var(--sq-dark); position: relative; touch-action: none; }
+  .cell { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; position: relative; touch-action: none; }
   .cell.light { background-color: var(--sq-light); background-image: var(--sq-light-img); }
   .cell.dark { background-color: var(--sq-dark); background-image: var(--sq-dark-img); box-shadow: inset 0 0 4px rgba(0,0,0,0.3); }
   
@@ -117,29 +117,32 @@
   body.theme-marble .message-overlay, body.theme-classic .message-overlay { background: #0f172a; border-color: #38bdf8; }
   .message-overlay.show { opacity: 1; }
   
-  .modal-backdrop { position: fixed; inset: 0; background: rgba(12, 6, 2, 0.82); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); display: flex; align-items: center; justify-content: center; padding: 20px; z-index: 200; opacity: 0; pointer-events: none; transition: opacity 0.2s ease; }
+  /* SCROLLABLE MENU MODAL */
+  .modal-backdrop { position: fixed; inset: 0; background: rgba(12, 6, 2, 0.82); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); display: flex; align-items: center; justify-content: center; padding: 14px; z-index: 200; opacity: 0; pointer-events: none; transition: opacity 0.2s ease; touch-action: pan-y; }
   body.theme-marble .modal-backdrop, body.theme-classic .modal-backdrop { background: rgba(2,6,23,0.82); }
   .modal-backdrop.open { opacity: 1; pointer-events: auto; }
-  .menu-card { background: linear-gradient(180deg, #4f2b13 0%, #2e1709 100%); border: 3px solid #8c5327; border-radius: 20px; padding: 24px; width: 100%; max-width: 440px; box-shadow: 0 22px 50px rgba(0,0,0,0.85), inset 0 2px 2px rgba(255,220,180,0.25); display: flex; flex-direction: column; gap: 14px; max-height: 90vh; overflow-y: auto; }
+  .menu-card { background: linear-gradient(180deg, #4f2b13 0%, #2e1709 100%); border: 3px solid #8c5327; border-radius: 20px; padding: 18px 18px 22px; width: 100%; max-width: 420px; box-shadow: 0 22px 50px rgba(0,0,0,0.85), inset 0 2px 2px rgba(255,220,180,0.25); display: flex; flex-direction: column; gap: 10px; max-height: 88vh; overflow-y: auto; -webkit-overflow-scrolling: touch; touch-action: pan-y; overscroll-behavior: contain; }
+  .menu-card * { touch-action: pan-y; }
   body.theme-marble .menu-card, body.theme-classic .menu-card { background: #1e293b; border-color: #334155; box-shadow: 0 20px 45px rgba(0,0,0,0.85); }
   
-  .menu-header { font-size: 1.5rem; font-weight: 900; text-align: center; margin: 0; color: #fde68a; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
-  .menu-sub { font-size: 0.9rem; color: #d6b894; text-align: center; margin-bottom: 4px; font-weight: 600; }
+  .menu-header { font-size: 1.4rem; font-weight: 900; text-align: center; margin: 0; color: #fde68a; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+  .menu-sub { font-size: 0.85rem; color: #d6b894; text-align: center; margin-bottom: 2px; font-weight: 600; }
   body.theme-marble .menu-sub, body.theme-classic .menu-sub { color: #94a3b8; }
+  .menu-section-title { color: #fff; margin: 6px 0 0 0; font-size: 0.92rem; text-align: center; font-weight: 800; letter-spacing: 0.02em; }
   
-  .menu-btn { width: 100%; padding: 15px 18px; font-size: 1.1rem; font-weight: 800; border-radius: 12px; border: 2px solid #291305; background: linear-gradient(180deg, #8c5228 0%, #5c3214 100%); box-shadow: 0 4px 8px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,220,180,0.35); color: #fff8eb; text-shadow: 0 1px 2px rgba(0,0,0,0.8); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
+  .menu-btn { width: 100%; padding: 12px 16px; font-size: 1.05rem; font-weight: 800; border-radius: 12px; border: 2px solid #291305; background: linear-gradient(180deg, #8c5228 0%, #5c3214 100%); box-shadow: 0 4px 8px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,220,180,0.35); color: #fff8eb; text-shadow: 0 1px 2px rgba(0,0,0,0.8); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; flex-shrink: 0; }
   body.theme-marble .menu-btn, body.theme-classic .menu-btn { background: #334155; border-color: #0f172a; box-shadow: 0 4px 8px rgba(0,0,0,0.5); }
   .menu-btn:active { transform: scale(0.97); }
   .menu-btn.draw { background: linear-gradient(180deg, #ca8a04 0%, #854d0e 100%); border-color: #422006; }
   .menu-btn.restart { background: linear-gradient(180deg, #dc2626 0%, #991b1b 100%); border-color: #450a0a; }
   .menu-btn.resume { background: linear-gradient(180deg, #16a34a 0%, #166534 100%); border-color: #052e16; }
   
-  .theme-selector, .mode-selector { display: flex; gap: 10px; justify-content: space-between; margin-top: 6px; }
-  .theme-btn, .mode-btn, .rules-btn, .diff-btn { flex: 1; padding: 10px; border-radius: 8px; border: 2px solid transparent; background: rgba(0,0,0,0.35); color: #fff; font-weight: bold; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; text-align: center; }
+  .theme-selector, .mode-selector { display: flex; gap: 8px; justify-content: space-between; margin-top: 2px; flex-shrink: 0; }
+  .theme-btn, .mode-btn, .rules-btn, .diff-btn { flex: 1; padding: 9px 6px; border-radius: 8px; border: 2px solid transparent; background: rgba(0,0,0,0.35); color: #fff; font-weight: bold; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; text-align: center; }
   .theme-btn.active, .mode-btn.active, .rules-btn.active, .diff-btn.active { border-color: #38bdf8; background: rgba(56, 189, 248, 0.15); }
 
-  .diff-selector { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 6px; }
-  .diff-btn[data-diff="6"] { grid-column: span 3; background: linear-gradient(180deg, rgba(76, 29, 149, 0.7) 0%, rgba(46, 16, 101, 0.9) 100%); border-color: #8b5cf6; color: #ddd6fe; font-size: 1rem; padding: 12px; }
+  .diff-selector { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; margin-top: 2px; flex-shrink: 0; }
+  .diff-btn[data-diff="6"] { grid-column: span 3; background: linear-gradient(180deg, rgba(76, 29, 149, 0.7) 0%, rgba(46, 16, 101, 0.9) 100%); border-color: #8b5cf6; color: #ddd6fe; font-size: 0.98rem; padding: 10px; }
   .diff-btn[data-diff="6"].active { background: linear-gradient(180deg, rgba(109, 40, 217, 0.9) 0%, rgba(76, 29, 149, 1) 100%); border-color: #c4b5fd; color: #fff; box-shadow: 0 0 15px rgba(139, 92, 246, 0.8); }
 
   /* Overlay for AI Thinking */
@@ -160,12 +163,10 @@
 
 <svg width="0" height="0" style="position:absolute; width:0; height:0; overflow:hidden;" aria-hidden="true">
   <defs>
-    <!-- Brighter White Pieces -->
     <linearGradient id="wOuterRim" x1="15%" y1="10%" x2="85%" y2="90%"><stop offset="0%" stop-color="#ffffff"/><stop offset="50%" stop-color="#f8f2e6"/><stop offset="85%" stop-color="#d4c5b0"/><stop offset="100%" stop-color="#a8957c"/></linearGradient>
     <linearGradient id="wGrooveDark" x1="15%" y1="15%" x2="85%" y2="85%"><stop offset="0%" stop-color="#bfaf99"/><stop offset="50%" stop-color="#e6dacc"/><stop offset="100%" stop-color="#ffffff"/></linearGradient>
     <radialGradient id="wCenterDomed" cx="35%" cy="30%" r="70%"><stop offset="0%" stop-color="#ffffff"/><stop offset="55%" stop-color="#fdf9f2"/><stop offset="100%" stop-color="#d4c5b0"/></radialGradient>
     
-    <!-- Darker, Higher Contrast Black Pieces -->
     <linearGradient id="bOuterRim" x1="15%" y1="10%" x2="85%" y2="90%"><stop offset="0%" stop-color="#475569"/><stop offset="35%" stop-color="#18181b"/><stop offset="75%" stop-color="#000000"/><stop offset="100%" stop-color="#000000"/></linearGradient>
     <linearGradient id="bGrooveDark" x1="15%" y1="15%" x2="85%" y2="85%"><stop offset="0%" stop-color="#000000"/><stop offset="55%" stop-color="#09090b"/><stop offset="100%" stop-color="#3f3f46"/></linearGradient>
     <radialGradient id="bCenterDomed" cx="35%" cy="30%" r="70%"><stop offset="0%" stop-color="#3f3f46"/><stop offset="50%" stop-color="#09090b"/><stop offset="100%" stop-color="#000000"/></radialGradient>
@@ -238,7 +239,7 @@
     <button class="menu-btn resume" id="btn-resume">▶ Resume Game</button>
     <button class="menu-btn restart" id="btn-restart">↻ Restart Game</button>
     
-    <h3 style="color:#fff; margin: 10px 0 0 0; font-size:1rem; text-align:center;">AI Difficulty</h3>
+    <h3 class="menu-section-title">AI Difficulty</h3>
     <div class="diff-selector">
       <button class="diff-btn" data-diff="1">Easy</button>
       <button class="diff-btn" data-diff="2">Med</button>
@@ -248,19 +249,19 @@
       <button class="diff-btn active" data-diff="6">Grandmaster 🧠</button>
     </div>
 
-    <h3 style="color:#fff; margin: 10px 0 0 0; font-size:1rem; text-align:center;">Game Rules</h3>
+    <h3 class="menu-section-title">Game Rules</h3>
     <div class="mode-selector">
       <button class="rules-btn active" data-rules="russian">🇷🇺 Russian</button>
       <button class="rules-btn" data-rules="indian">🇮🇳 Indian</button>
     </div>
 
-    <h3 style="color:#fff; margin: 10px 0 0 0; font-size:1rem; text-align:center;">Game Mode</h3>
+    <h3 class="menu-section-title">Game Mode</h3>
     <div class="mode-selector">
       <button class="mode-btn active" data-mode="1">🤖 1 Player</button>
       <button class="mode-btn" data-mode="2">👥 2 Players</button>
     </div>
 
-    <h3 style="color:#fff; margin: 10px 0 0 0; font-size:1rem; text-align:center;">Theme</h3>
+    <h3 class="menu-section-title">Theme</h3>
     <div class="theme-selector">
       <button class="theme-btn active" data-theme="theme-wood">Wood</button>
       <button class="theme-btn" data-theme="theme-marble">Marble</button>
@@ -527,6 +528,7 @@ function updateMenuUI() {
 function initGame(forceNew) {
   if (forceNew === undefined) forceNew = false;
   clearTimeout(aiMoveTimeout);
+  clearEngineTables();
   createGrid();
   if (forceNew || !loadState()) {
     pieceIdCounter = 0; halfMoveClock = 0;
@@ -538,7 +540,7 @@ function initGame(forceNew) {
     selected = null; targets = [];
     if (multiJumpPiece && b[multiJumpPiece.r] && b[multiJumpPiece.r][multiJumpPiece.c]) {
       selected = { r: multiJumpPiece.r, c: multiJumpPiece.c };
-      targets = getMaximalFirstHops(
+      targets = getAllFirstHops(
         generateAllJumpSequences(multiJumpPiece.r, multiJumpPiece.c, b[multiJumpPiece.r][multiJumpPiece.c], b, removedDuringTurn)
       );
     }
@@ -644,29 +646,55 @@ function getSimpleMoves(r, c, p, boardState) {
   return moves;
 }
 
-// Extract unique first hops from the longest (maximal) jump sequences
-function getMaximalFirstHops(sequences) {
+function generateAllJumpSequences(r, c, p, boardState, initialGhosts) {
+    var sequences = [];
+    var startGhosts = initialGhosts ? initialGhosts.slice() : [];
+    
+    function searchJumps(currR, currC, currP, currBoard, currentSequence, ghosts) {
+        var furtherCaps = getCaptures(currR, currC, currP, currBoard, ghosts);
+        if (furtherCaps.length === 0) {
+            if (currentSequence.length > 0) sequences.push(currentSequence);
+            return;
+        }
+        for (var i=0; i<furtherCaps.length; i++) {
+            var move = furtherCaps[i];
+            var nextSequence = currentSequence.slice();
+            nextSequence.push(move);
+            var nextGhosts = ghosts.slice();
+            nextGhosts.push(move.cap);
+            
+            var simB = cloneBoard(currBoard);
+            var pSim = { side: currP.side, king: currP.king, id: currP.id };
+            simB[move.r][move.c] = pSim;
+            simB[currR][currC] = null;
+            
+            if (!pSim.king && ((pSim.side === 'w' && move.r === 0) || (pSim.side === 'b' && move.r === 7))) {
+                pSim.king = true;
+            }
+            
+            searchJumps(move.r, move.c, pSim, simB, nextSequence, nextGhosts);
+        }
+    }
+
+    searchJumps(r, c, p, boardState, [], startGhosts);
+    return sequences;
+}
+
+function getAllFirstHops(sequences) {
   if (!sequences || sequences.length === 0) return [];
-  var maxLen = 0;
-  for (var i = 0; i < sequences.length; i++) {
-    if (sequences[i].length > maxLen) maxLen = sequences[i].length;
-  }
   var moves = [];
   var seen = {};
   for (var j = 0; j < sequences.length; j++) {
-    if (sequences[j].length === maxLen) {
-      var first = sequences[j][0];
-      var key = first.r + ',' + first.c + ',' + first.cap.r + ',' + first.cap.c;
-      if (!seen[key]) {
-        seen[key] = true;
-        moves.push(first);
-      }
+    var first = sequences[j][0];
+    var key = first.r + ',' + first.c + ',' + first.cap.r + ',' + first.cap.c;
+    if (!seen[key]) {
+      seen[key] = true;
+      moves.push(first);
     }
   }
   return moves;
 }
 
-// Fast check for whether any capture exists on the board
 function hasAnyCapture(side, boardState) {
   if (!boardState) boardState = b;
   for (var r = 0; r < 8; r++) {
@@ -680,35 +708,21 @@ function hasAnyCapture(side, boardState) {
   return false;
 }
 
-// Enforces mandatory maximum capture (double/multi-jumps are strictly required over single jumps)
 function getAllCaptures(side, boardState) {
   if (!boardState) boardState = b;
-  var allPieceSeqs = [];
-  var globalMaxLen = 0;
+  var list = [];
   for (var r = 0; r < 8; r++) {
     for (var c = 0; c < 8; c++) {
       var p = boardState[r][c];
       if (p && p.side === side) {
         var seqs = generateAllJumpSequences(r, c, p, boardState, []);
         if (seqs.length > 0) {
-          var pieceMax = 0;
-          for (var i = 0; i < seqs.length; i++) {
-            if (seqs[i].length > pieceMax) pieceMax = seqs[i].length;
-          }
-          if (pieceMax > globalMaxLen) globalMaxLen = pieceMax;
-          allPieceSeqs.push({ from: { r: r, c: c }, seqs: seqs, maxLen: pieceMax });
+          list.push({
+            from: { r: r, c: c },
+            moves: getAllFirstHops(seqs)
+          });
         }
       }
-    }
-  }
-  var list = [];
-  for (var j = 0; j < allPieceSeqs.length; j++) {
-    if (allPieceSeqs[j].maxLen === globalMaxLen) {
-      list.push({
-        from: allPieceSeqs[j].from,
-        moves: getMaximalFirstHops(allPieceSeqs[j].seqs),
-        maxLen: globalMaxLen
-      });
     }
   }
   return list;
@@ -718,7 +732,7 @@ function showMessage(text) {
   if (!msgOverlay) return;
   msgOverlay.textContent = text; 
   msgOverlay.classList.add('show');
-  setTimeout(function() { msgOverlay.classList.remove('show'); }, 1800);
+  setTimeout(function() { msgOverlay.classList.remove('show'); }, 2200);
 }
 
 function handleTap(r, c, fromAI) {
@@ -752,7 +766,7 @@ function handleTap(r, c, fromAI) {
       for (var j=0; j<allCaps.length; j++) { if (allCaps[j].from.r === r && allCaps[j].from.c === c) pieceCaps = allCaps[j]; }
       if (!pieceCaps) { 
           if (!fromAI) {
-            showMessage(allCaps[0].maxLen > 1 ? "Multi-jump is mandatory!" : "Capture is mandatory!");
+            showMessage("Capture is mandatory!");
           }
           return; 
       }
@@ -793,7 +807,7 @@ function executeMove(fr, fc, target, fromAI) {
     removedDuringTurn.push(target.cap);
     var furtherSeqs = generateAllJumpSequences(target.r, target.c, p, b, removedDuringTurn);
     if (furtherSeqs.length > 0) {
-      var furtherCaps = getMaximalFirstHops(furtherSeqs);
+      var furtherCaps = getAllFirstHops(furtherSeqs);
       multiJumpPiece = { r: target.r, c: target.c }; selected = { r: target.r, c: target.c }; targets = furtherCaps;
       render(); persistState(); 
       triggerAIIfNeeded();
@@ -806,7 +820,9 @@ function executeMove(fr, fc, target, fromAI) {
   }
 
   multiJumpPiece = null; selected = null; targets = []; turn = (turn === 'w') ? 'b' : 'w';
-  render(); checkGameOver(); persistState();
+  checkGameOver();
+  render();
+  persistState();
   triggerAIIfNeeded();
 }
 
@@ -829,7 +845,6 @@ function checkGameOver() {
     var winner = turn === 'w' ? (isVsAI ? 'Computer (Black)' : 'Player 2 (Black)') : 'Player 1 (White)';
     showMessage('🏆 ' + winner + ' Wins!');
     playSound('thud');
-    persistState();
     return;
   }
   
@@ -837,13 +852,12 @@ function checkGameOver() {
     gameOver = true;
     showMessage("🤝 Draw (15 Move Rule)");
     playSound('thud');
-    persistState();
   }
 }
 
 function render() {
   var wCount = 0; var bCount = 0;
-  var allCaps = getAllCaptures(turn, b);
+  var allCaps = gameOver ? [] : getAllCaptures(turn, b);
   var capCoords = {};
   for (var i=0; i<allCaps.length; i++) {
       capCoords[allCaps[i].from.r + ',' + allCaps[i].from.c] = true;
@@ -915,16 +929,29 @@ function render() {
   if (countW) countW.textContent = wCount; 
   if (countB) countB.textContent = bCount;
 
-  if (turn === 'w') {
+  if (gameOver) {
+    if (panelW) panelW.classList.remove('active-turn');
+    if (panelB) panelB.classList.remove('active-turn');
+    if (halfMoveClock >= 30) {
+      if (subW) subW.textContent = "Draw";
+      if (subB) subB.textContent = "Draw";
+      if (menuStatus) menuStatus.textContent = "Match Drawn";
+    } else {
+      var whiteWon = (turn === 'b');
+      if (subW) subW.textContent = whiteWon ? "Winner! 🏆" : "Defeated";
+      if (subB) subB.textContent = whiteWon ? "Defeated" : "Winner! 🏆";
+      if (menuStatus) menuStatus.textContent = whiteWon ? "Player 1 Wins!" : (isVsAI ? "Computer Wins!" : "Player 2 Wins!");
+    }
+  } else if (turn === 'w') {
     if (panelW) panelW.classList.add('active-turn'); 
     if (panelB) panelB.classList.remove('active-turn');
-    if (subW) subW.textContent = allCaps.length > 0 ? (allCaps[0].maxLen > 1 ? "Must Multi-Jump!" : "Must Capture!") : "Your Turn"; 
+    if (subW) subW.textContent = allCaps.length > 0 ? "Must Capture!" : "Your Turn"; 
     if (subB) subB.textContent = "Waiting...";
     if (menuStatus) menuStatus.textContent = "Current Turn: Player 1 (White)";
   } else {
     if (panelB) panelB.classList.add('active-turn'); 
     if (panelW) panelW.classList.remove('active-turn');
-    if (subB) subB.textContent = allCaps.length > 0 ? (allCaps[0].maxLen > 1 ? "Must Multi-Jump!" : "Must Capture!") : (isVsAI ? "Thinking..." : "Your Turn"); 
+    if (subB) subB.textContent = allCaps.length > 0 ? "Must Capture!" : (isVsAI ? "Thinking..." : "Your Turn"); 
     if (subW) subW.textContent = "Waiting...";
     if (menuStatus) menuStatus.textContent = "Current Turn: " + (isVsAI ? "Computer (Black)" : "Player 2 (Black)");
   }
@@ -939,301 +966,574 @@ function triggerAIIfNeeded() {
                  doAITurn();
              });
         }, 50); 
+    } else {
+        if (thinkingOverlay) thinkingOverlay.classList.remove('active');
     }
 }
 
-// ----------------------------------------------------
-// TRUE GRANDMASTER AI LOGIC (Bug-free, Deterministic)
-// ----------------------------------------------------
+// ============================================================================
+// HIGH-SPEED FLAT-BOARD GRANDMASTER ENGINE
+// Int8Array(64) + Zobrist TT (with Exact/Lower/Upper Bounds) + Iterative Deepening
+// + True Checkers Quiescence Search (NO stand-pat) + PVS + Opening Book
+// ============================================================================
 
-// Evaluate board strictly from the AI's perspective (aiSideChar)
-function evaluateBoard(boardState, aiSideChar) {
-    var myScore = 0;
-    var oppScore = 0;
-    var myMobility = 0;
-    var oppMobility = 0;
-    
-    var myPieces = [];
-    var oppPieces = [];
+var TT_SIZE = 1 << 18; // 262,144 entries (zero GC)
+var TT_MASK = TT_SIZE - 1;
+var ttKey = new Uint32Array(TT_SIZE);
+var ttDepth = new Int8Array(TT_SIZE);
+var ttFlag = new Uint8Array(TT_SIZE); // 0=empty, 1=EXACT, 2=LOWER, 3=UPPER
+var ttScore = new Int32Array(TT_SIZE);
+var ttMove = new Int32Array(TT_SIZE);
 
-    for(var ir=0; ir<8; ir++) {
-      for(var ic=0; ic<8; ic++) {
-        var piece = boardState[ir][ic];
-        if (piece) {
-          var val = piece.king ? 1000 : 100;
-          
-          if (!piece.king) {
-              // Advancing adds compounding value
-              var advancement = (piece.side === 'b' ? ir : (7 - ir));
-              val += (advancement * advancement * 1.5);
-              
-              // Runaway Checker Detection (No enemies in front)
-              var isRunaway = true;
-              var forwardDir = (piece.side === 'b') ? 1 : -1;
-              for (var scanR = ir + forwardDir; scanR >= 0 && scanR < 8; scanR += forwardDir) {
-                  for (var scanC = 0; scanC < 8; scanC++) {
-                      if (boardState[scanR][scanC] && boardState[scanR][scanC].side !== piece.side) {
-                          isRunaway = false;
-                          break;
-                      }
-                  }
-                  if (!isRunaway) break;
-              }
-              if (isRunaway && advancement > 3) val += 300; 
-          } else {
-              // King Centralization
-              if (ic > 2 && ic < 5 && ir > 2 && ir < 5) val += 50;
+var historyTable = new Int32Array(4096);
+var killerMove1 = new Int32Array(64);
+var killerMove2 = new Int32Array(64);
+
+// Pre-allocated board stack (zero GC allocations during search)
+var boardStack = [];
+for (var bs = 0; bs < 64; bs++) boardStack.push(new Int8Array(64));
+
+// Deterministic PRNG for Zobrist keys
+var zSeed = 0x12345678;
+function nextRand32() {
+  zSeed = (zSeed + 0x6D2B79F5) | 0;
+  var t = Math.imul(zSeed ^ (zSeed >>> 15), 1 | zSeed);
+  t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+  return ((t ^ (t >>> 14)) >>> 0);
+}
+
+// Piece codes mapped to 0..3: -2->0, -1->1, 1->2, 2->3
+var zob1 = new Uint32Array(64 * 4);
+var zob2 = new Uint32Array(64 * 4);
+for (var zi = 0; zi < 256; zi++) {
+  zob1[zi] = nextRand32();
+  zob2[zi] = nextRand32();
+}
+var zobSide1 = nextRand32();
+var zobSide2 = nextRand32();
+
+function clearEngineTables() {
+  ttFlag.fill(0);
+  historyTable.fill(0);
+  killerMove1.fill(0);
+  killerMove2.fill(0);
+}
+
+function pieceToZobIdx(v) {
+  if (v === -2) return 0;
+  if (v === -1) return 1;
+  if (v === 1) return 2;
+  return 3;
+}
+
+function computeHash(fb, side) {
+  var h1 = (side === 1) ? zobSide1 : 0;
+  var h2 = (side === 1) ? zobSide2 : 0;
+  for (var i = 0; i < 64; i++) {
+    var v = fb[i];
+    if (v !== 0) {
+      var idx = (i << 2) + pieceToZobIdx(v);
+      h1 = (h1 ^ zob1[idx]) >>> 0;
+      h2 = (h2 ^ zob2[idx]) >>> 0;
+    }
+  }
+  return [h1, h2];
+}
+
+function boardToFlat(srcBoard) {
+  var fb = new Int8Array(64);
+  for (var r = 0; r < 8; r++) {
+    for (var c = 0; c < 8; c++) {
+      var p = srcBoard[r][c];
+      if (p) {
+        fb[(r << 3) | c] = (p.side === 'w') ? (p.king ? 2 : 1) : (p.king ? -2 : -1);
+      }
+    }
+  }
+  return fb;
+}
+
+var searchNodes = 0;
+var searchDeadline = 0;
+var searchTimeUp = false;
+var searchRulesIndian = false;
+var searchUseQuiescence = true;
+
+// Fast capture generator for a single square on Int8Array(64)
+function getFastCapturesForSq(fb, sq, pieceVal, ghosts, ghostCount) {
+  var r = sq >> 3, c = sq & 7;
+  var side = pieceVal > 0 ? 1 : -1;
+  var isKing = (pieceVal === 2 || pieceVal === -2);
+  var out = [];
+
+  if (!isKing || searchRulesIndian) {
+    for (var d = 0; d < 4; d++) {
+      var dr = DIRS[d][0], dc = DIRS[d][1];
+      if (searchRulesIndian && !isKing) {
+        if ((side === 1 && dr !== -1) || (side === -1 && dr !== 1)) continue;
+      }
+      var mr = r + dr, mc = c + dc;
+      var tr = r + (dr << 1), tc = c + (dc << 1);
+      if (tr >= 0 && tr < 8 && tc >= 0 && tc < 8) {
+        var mSq = (mr << 3) | mc;
+        var tSq = (tr << 3) | tc;
+        var midV = fb[mSq];
+        if (midV !== 0 && ((midV > 0 ? 1 : -1) !== side) && fb[tSq] === 0) {
+          var eaten = false;
+          for (var g = 0; g < ghostCount; g++) {
+            if (ghosts[g] === mSq) { eaten = true; break; }
           }
-          
-          // Center control bonus
-          if (ic > 1 && ic < 6 && ir > 1 && ir < 6) val += 20;
-          
-          // Back row defense (do not move off back row unless forced)
-          if (!piece.king && (ir === 0 || ir === 7)) val += 60;
-          
-          // Edge safety bonus
-          if (ic === 0 || ic === 7) val += 15;
-
-          // Phalanx / Formation Bonus (Connected pieces)
-          var connected = 0;
-          for (var dir=0; dir<DIRS.length; dir++) {
-              var nr = ir + DIRS[dir][0];
-              var nc = ic + DIRS[dir][1];
-              if (inBounds(nr, nc) && boardState[nr][nc] && boardState[nr][nc].side === piece.side) {
-                  connected++;
-              }
+          if (!eaten) out.push((tSq << 6) | mSq);
+        }
+      }
+    }
+  } else {
+    // Russian Flying King
+    for (var d2 = 0; d2 < 4; d2++) {
+      var fdr = DIRS[d2][0], fdc = DIRS[d2][1];
+      var cr = r + fdr, cc = c + fdc;
+      var enemySq = -1;
+      while (cr >= 0 && cr < 8 && cc >= 0 && cc < 8) {
+        var cSq = (cr << 3) | cc;
+        var occ = fb[cSq];
+        if (occ !== 0) {
+          if ((occ > 0 ? 1 : -1) === side || enemySq !== -1) break;
+          var eaten2 = false;
+          for (var g2 = 0; g2 < ghostCount; g2++) {
+            if (ghosts[g2] === cSq) { eaten2 = true; break; }
           }
-          val += (connected * 12);
+          if (eaten2) break;
+          enemySq = cSq;
+        } else if (enemySq !== -1) {
+          out.push((cSq << 6) | enemySq);
+        }
+        cr += fdr; cc += fdc;
+      }
+    }
+  }
+  return out;
+}
 
-          // Add to respective scores
-          if (piece.side === aiSideChar) {
-              myScore += val;
-              myPieces.push({r: ir, c: ic, king: piece.king});
-              myMobility += getSimpleMoves(ir, ic, piece, boardState).length;
-          } else {
-              oppScore += val;
-              oppPieces.push({r: ir, c: ic, king: piece.king});
-              oppMobility += getSimpleMoves(ir, ic, piece, boardState).length;
+function genFastJumpSeqsFrom(fb, startSq, pieceVal, initGhosts) {
+  var results = [];
+  var ghosts = new Int8Array(16);
+  var gLen = 0;
+  if (initGhosts) {
+    for (var ig = 0; ig < initGhosts.length; ig++) ghosts[gLen++] = initGhosts[ig];
+  }
+  var path = new Int32Array(16);
+
+  function dfs(currSq, currVal, depth, gCount) {
+    var caps = getFastCapturesForSq(fb, currSq, currVal, ghosts, gCount);
+    if (caps.length === 0) {
+      if (depth > 0) {
+        var seq = new Int32Array(depth);
+        for (var k = 0; k < depth; k++) seq[k] = path[k];
+        results.push(seq);
+      }
+      return;
+    }
+    for (var i = 0; i < caps.length; i++) {
+      var code = caps[i];
+      var toSq = code >> 6;
+      var capSq = code & 63;
+      var nextVal = currVal;
+      var toR = toSq >> 3;
+      if (currVal === 1 && toR === 0) nextVal = 2;
+      else if (currVal === -1 && toR === 7) nextVal = -2;
+
+      fb[currSq] = 0;
+      fb[toSq] = nextVal;
+      ghosts[gCount] = capSq;
+      path[depth] = code;
+
+      dfs(toSq, nextVal, depth + 1, gCount + 1);
+
+      fb[toSq] = 0;
+      fb[currSq] = currVal;
+    }
+  }
+
+  dfs(startSq, pieceVal, 0, gLen);
+  return results;
+}
+
+// Generate all valid turns on Int8Array(64) (any piece can capture; once jumping, must finish multi-jump)
+function genFastTurns(fb, side, capsOnly) {
+  var capTurns = [];
+
+  for (var sq = 0; sq < 64; sq++) {
+    var v = fb[sq];
+    if (v !== 0 && (v > 0 ? 1 : -1) === side) {
+      var seqs = genFastJumpSeqsFrom(fb, sq, v, null);
+      if (seqs.length > 0) {
+        for (var s = 0; s < seqs.length; s++) {
+          var len = seqs[s].length;
+          capTurns.push({ from: sq, seq: seqs[s], to: seqs[s][len - 1] >> 6, isCap: true });
+        }
+      }
+    }
+  }
+
+  if (capTurns.length > 0 || capsOnly) return capTurns;
+
+  var simpleTurns = [];
+  for (var sq2 = 0; sq2 < 64; sq2++) {
+    var v2 = fb[sq2];
+    if (v2 === 0 || (v2 > 0 ? 1 : -1) !== side) continue;
+    var r = sq2 >> 3, c = sq2 & 7;
+    var isKing = (v2 === 2 || v2 === -2);
+    if (isKing && !searchRulesIndian) {
+      for (var d = 0; d < 4; d++) {
+        var dr = DIRS[d][0], dc = DIRS[d][1];
+        var cr = r + dr, cc = c + dc;
+        while (cr >= 0 && cr < 8 && cc >= 0 && cc < 8) {
+          var tSq = (cr << 3) | cc;
+          if (fb[tSq] !== 0) break;
+          simpleTurns.push({ from: sq2, to: tSq, isCap: false });
+          cr += dr; cc += dc;
+        }
+      }
+    } else {
+      var startD = isKing ? 0 : (side === 1 ? 0 : 2);
+      var endD = isKing ? 4 : (side === 1 ? 2 : 4);
+      for (var d2 = startD; d2 < endD; d2++) {
+        var nr = r + DIRS[d2][0], nc = c + DIRS[d2][1];
+        if (nr >= 0 && nr < 8 && nc >= 0 && nc < 8) {
+          var tSq2 = (nr << 3) | nc;
+          if (fb[tSq2] === 0) {
+            simpleTurns.push({ from: sq2, to: tSq2, isCap: false });
           }
         }
       }
     }
-    
-    // Suffocating the opponent
-    var mobilityScore = (myMobility - oppMobility) * 8;
-    
-    // Endgame Terminator Protocol (Aggressively hunt down remaining pieces)
-    var endgameScore = 0;
-    if (myScore > oppScore + 300 && oppPieces.length <= 4) {
-        for (var i = 0; i < myPieces.length; i++) {
-            if (myPieces[i].king) {
-                for (var j = 0; j < oppPieces.length; j++) {
-                    var dist = Math.abs(myPieces[i].r - oppPieces[j].r) + Math.abs(myPieces[i].c - oppPieces[j].c);
-                    endgameScore += (14 - dist) * 15; // Reward closer proximity
-                    
-                    if (oppPieces[j].r === 0 || oppPieces[j].r === 7 || oppPieces[j].c === 0 || oppPieces[j].c === 7) {
-                        endgameScore += 100; // Massive reward for cornering
-                    }
-                }
-            }
-        }
-    }
-    
-    // Fully Deterministic: NO Math.random() so AI doesn't accidentally pick inferior moves.
-    return (myScore - oppScore) + mobilityScore + endgameScore;
+  }
+  return simpleTurns;
 }
 
-// Generate jump sequences properly crowning pieces mid-jump and respecting already-eaten ghosts
-function generateAllJumpSequences(r, c, p, boardState, initialGhosts) {
-    var sequences = [];
-    var startGhosts = initialGhosts ? initialGhosts.slice() : [];
-    
-    function searchJumps(currR, currC, currP, currBoard, currentSequence, ghosts) {
-        var furtherCaps = getCaptures(currR, currC, currP, currBoard, ghosts);
-        if (furtherCaps.length === 0) {
-            if (currentSequence.length > 0) sequences.push(currentSequence);
-            return;
-        }
-        for (var i=0; i<furtherCaps.length; i++) {
-            var move = furtherCaps[i];
-            var nextSequence = currentSequence.slice();
-            nextSequence.push(move);
-            var nextGhosts = ghosts.slice();
-            nextGhosts.push(move.cap);
-            
-            var simB = cloneBoard(currBoard);
-            var pSim = { side: currP.side, king: currP.king, id: currP.id };
-            simB[move.r][move.c] = pSim;
-            simB[currR][currC] = null;
-            
-            // Crown piece mid-jump (Russian Checkers Rule)
-            if (!pSim.king && ((pSim.side === 'w' && move.r === 0) || (pSim.side === 'b' && move.r === 7))) {
-                pSim.king = true;
-            }
-            
-            searchJumps(move.r, move.c, pSim, simB, nextSequence, nextGhosts);
-        }
-    }
+function applyFastTurn(src, dst, turnObj) {
+  dst.set(src);
+  var fromSq = turnObj.from;
+  var v = dst[fromSq];
+  dst[fromSq] = 0;
 
-    searchJumps(r, c, p, boardState, [], startGhosts);
-    return sequences;
+  if (turnObj.isCap) {
+    var seq = turnObj.seq;
+    for (var i = 0; i < seq.length; i++) {
+      var code = seq[i];
+      var toSq = code >> 6;
+      var capSq = code & 63;
+      dst[capSq] = 0;
+      var toR = toSq >> 3;
+      if (v === 1 && toR === 0) v = 2;
+      else if (v === -1 && toR === 7) v = -2;
+    }
+    dst[turnObj.to] = v;
+  } else {
+    var toSq2 = turnObj.to;
+    var toR2 = toSq2 >> 3;
+    if (v === 1 && toR2 === 0) v = 2;
+    else if (v === -1 && toR2 === 7) v = -2;
+    dst[toSq2] = v;
+  }
 }
 
-// Applies a full turn (simple move or multi-jump) and returns the resulting board
-function applyTurn(boardState, turnSeq) {
-    var simB = cloneBoard(boardState);
-    var pSim = simB[turnSeq.from.r][turnSeq.from.c];
-    var finalPos = turnSeq.from;
-    
-    for (var j=0; j<turnSeq.moves.length; j++) {
-        var m = turnSeq.moves[j];
-        simB[m.r][m.c] = pSim;
-        simB[finalPos.r][finalPos.c] = null;
-        if (m.cap) simB[m.cap.r][m.cap.c] = null;
-        finalPos = m;
-        
-        // Mid-jump crowning
-        if (!pSim.king && ((pSim.side === 'w' && m.r === 0) || (pSim.side === 'b' && m.r === 7))) {
-            pSim.king = true;
+// Realistic, Grandmaster-tuned evaluation (White minus Black, then * side)
+function evalFastBoard(fb, side) {
+  var wMat = 0, bMat = 0;
+  var wPos = 0, bPos = 0;
+  var wMob = 0, bMob = 0;
+  var wMen = 0, bMen = 0, wKings = 0, bKings = 0;
+  var kingVal = searchRulesIndian ? 260 : 340;
+
+  // Store piece coordinates for endgame hunting
+  var wKingSqs = [], bKingSqs = [], wAllSqs = [], bAllSqs = [];
+
+  for (var sq = 0; sq < 64; sq++) {
+    var v = fb[sq];
+    if (v === 0) continue;
+    var r = sq >> 3, c = sq & 7;
+    var isCenter = (c >= 2 && c <= 5 && r >= 2 && r <= 5);
+    var isEdge = (c === 0 || c === 7);
+
+    if (v > 0) {
+      wAllSqs.push(sq);
+      if (v === 1) {
+        wMat += 100;
+        wMen++;
+        var adv = 7 - r;
+        wPos += adv * 4;
+        if (r === 7) wPos += (c === 2 || c === 4) ? 24 : 14; // Golden back-row guard
+        else if (r === 1) wPos += 26; // 1 step from crowning
+        else if (r === 2) wPos += 14;
+        if (isCenter) wPos += 18;
+        if (isEdge) wPos -= 4;
+
+        // Connected diagonal defenders behind White man (r+1)
+        if (r < 7) {
+          if (c > 0 && fb[sq + 7] > 0) wPos += 10;
+          if (c < 7 && fb[sq + 9] > 0) wPos += 10;
         }
-    }
-    return simB;
-}
-
-function generateAllValidTurns(side, boardState) {
-    var turns = [];
-    var hasCaptures = false;
-    var maxCapLen = 0;
-    
-    for (var r = 0; r < 8; r++) {
-        for (var c = 0; c < 8; c++) {
-            var p = boardState[r][c];
-            if (p && p.side === side) {
-                var jumpSequences = generateAllJumpSequences(r, c, p, boardState, []);
-                if (jumpSequences.length > 0) {
-                    hasCaptures = true;
-                    for(var s=0; s<jumpSequences.length; s++) {
-                        if (jumpSequences[s].length > maxCapLen) maxCapLen = jumpSequences[s].length;
-                        turns.push({ from: {r: r, c: c}, moves: jumpSequences[s], isCapture: true });
-                    }
-                }
-            }
+        // Mobility
+        if (r > 0) {
+          if (c > 0 && fb[sq - 9] === 0) wMob++;
+          if (c < 7 && fb[sq - 7] === 0) wMob++;
         }
-    }
-
-    if (hasCaptures) {
-        // Strictly enforce maximum capture (mandatory double/multi-jump)
-        var maxTurns = [];
-        for (var t = 0; t < turns.length; t++) {
-            if (turns[t].moves.length === maxCapLen) maxTurns.push(turns[t]);
-        }
-        return maxTurns;
-    }
-
-    for (var r = 0; r < 8; r++) {
-        for (var c = 0; c < 8; c++) {
-            var p = boardState[r][c];
-            if (p && p.side === side) {
-                var mvs = getSimpleMoves(r, c, p, boardState);
-                for (var i=0; i<mvs.length; i++) {
-                    turns.push({ from: {r: r, c: c}, moves: [mvs[i]], isCapture: false });
-                }
-            }
-        }
-    }
-    
-    return turns;
-}
-
-function quiescenceSearch(boardState, alpha, beta, isMaximizing, aiSideChar, depth) {
-    var eval = evaluateBoard(boardState, aiSideChar);
-    
-    // Hard depth limit on quiescence to prevent infinite loops in JS
-    if (depth > 4) return eval;
-    
-    var oppSideChar = aiSideChar === 'b' ? 'w' : 'b';
-    var currentSide = isMaximizing ? aiSideChar : oppSideChar;
-    
-    // Check if captures are possible
-    if (!hasAnyCapture(currentSide, boardState)) return eval; // Quiet position
-
-    if (isMaximizing) {
-        alpha = Math.max(alpha, eval);
-        if (beta <= alpha) return alpha;
+      } else {
+        wMat += kingVal;
+        wKings++;
+        wKingSqs.push(sq);
+        if (isCenter) wPos += 24;
+        if (!searchRulesIndian && (r + c === 7)) wPos += 26; // Main diagonal control
+        if (isEdge) wPos -= 10;
+        // King mobility (immediate neighbors)
+        if (r > 0 && c > 0 && fb[sq - 9] === 0) wMob++;
+        if (r > 0 && c < 7 && fb[sq - 7] === 0) wMob++;
+        if (r < 7 && c > 0 && fb[sq + 7] === 0) wMob++;
+        if (r < 7 && c < 7 && fb[sq + 9] === 0) wMob++;
+      }
     } else {
-        beta = Math.min(beta, eval);
-        if (beta <= alpha) return beta;
-    }
-    
-    var possibleTurns = generateAllValidTurns(currentSide, boardState); 
-    
-    if (isMaximizing) {
-        var maxEval = -Infinity;
-        for (var i = 0; i < possibleTurns.length; i++) {
-            var simB = applyTurn(boardState, possibleTurns[i]);
-            var ev = quiescenceSearch(simB, alpha, beta, false, aiSideChar, depth + 1);
-            maxEval = Math.max(maxEval, ev);
-            alpha = Math.max(alpha, ev);
-            if (beta <= alpha) break;
+      bAllSqs.push(sq);
+      if (v === -1) {
+        bMat += 100;
+        bMen++;
+        var advB = r;
+        bPos += advB * 4;
+        if (r === 0) bPos += (c === 3 || c === 5) ? 24 : 14; // Golden back-row guard
+        else if (r === 6) bPos += 26;
+        else if (r === 5) bPos += 14;
+        if (isCenter) bPos += 18;
+        if (isEdge) bPos -= 4;
+
+        // Connected diagonal defenders behind Black man (r-1)
+        if (r > 0) {
+          if (c > 0 && fb[sq - 9] < 0) bPos += 10;
+          if (c < 7 && fb[sq - 7] < 0) bPos += 10;
         }
-        return maxEval === -Infinity ? eval : maxEval;
-    } else {
-        var minEval = Infinity;
-        for (var i = 0; i < possibleTurns.length; i++) {
-            var simB = applyTurn(boardState, possibleTurns[i]);
-            var ev = quiescenceSearch(simB, alpha, beta, true, aiSideChar, depth + 1);
-            minEval = Math.min(minEval, ev);
-            beta = Math.min(beta, ev);
-            if (beta <= alpha) break;
+        // Mobility
+        if (r < 7) {
+          if (c > 0 && fb[sq + 7] === 0) bMob++;
+          if (c < 7 && fb[sq + 9] === 0) bMob++;
         }
-        return minEval === Infinity ? eval : minEval;
+      } else {
+        bMat += kingVal;
+        bKings++;
+        bKingSqs.push(sq);
+        if (isCenter) bPos += 24;
+        if (!searchRulesIndian && (r + c === 7)) bPos += 26;
+        if (isEdge) bPos -= 10;
+        if (r > 0 && c > 0 && fb[sq - 9] === 0) bMob++;
+        if (r > 0 && c < 7 && fb[sq - 7] === 0) bMob++;
+        if (r < 7 && c > 0 && fb[sq + 7] === 0) bMob++;
+        if (r < 7 && c < 7 && fb[sq + 9] === 0) bMob++;
+      }
     }
+  }
+
+  var score = (wMat - bMat) + (wPos - bPos) + (wMob - bMob) * 5;
+
+  // Trade-down bonus when ahead in material (simplify winning endgames)
+  var totalPieces = wMen + bMen + wKings + bKings;
+  if (wMat > bMat + 80) {
+    score += (24 - totalPieces) * 8;
+  } else if (bMat > wMat + 80) {
+    score -= (24 - totalPieces) * 8;
+  }
+
+  // Endgame Terminator Hunting Protocol (when ahead and opponent has <= 4 pieces)
+  if (totalPieces <= 10) {
+    if (wMat > bMat + 150 && wKingSqs.length > 0 && bAllSqs.length <= 4) {
+      for (var i = 0; i < wKingSqs.length; i++) {
+        var kr = wKingSqs[i] >> 3, kc = wKingSqs[i] & 7;
+        for (var j = 0; j < bAllSqs.length; j++) {
+          var er = bAllSqs[j] >> 3, ec = bAllSqs[j] & 7;
+          var dist = Math.abs(kr - er) + Math.abs(kc - ec);
+          score += (14 - dist) * 6;
+          if (er === 0 || er === 7 || ec === 0 || ec === 7) score += 18;
+        }
+      }
+    } else if (bMat > wMat + 150 && bKingSqs.length > 0 && wAllSqs.length <= 4) {
+      for (var i2 = 0; i2 < bKingSqs.length; i2++) {
+        var kr2 = bKingSqs[i2] >> 3, kc2 = bKingSqs[i2] & 7;
+        for (var j2 = 0; j2 < wAllSqs.length; j2++) {
+          var er2 = wAllSqs[j2] >> 3, ec2 = wAllSqs[j2] & 7;
+          var dist2 = Math.abs(kr2 - er2) + Math.abs(kc2 - ec2);
+          score -= (14 - dist2) * 6;
+          if (er2 === 0 || er2 === 7 || ec2 === 0 || ec2 === 7) score -= 18;
+        }
+      }
+    }
+  }
+
+  return score * side;
 }
 
-// Rock-Solid Alpha-Beta Minimax
-function minimax(boardState, depth, alpha, beta, isMaximizing, aiSideChar) {
-    var oppSideChar = aiSideChar === 'b' ? 'w' : 'b';
-    var currentSide = isMaximizing ? aiSideChar : oppSideChar;
+// TRUE Checkers Quiescence Search (NO illegal stand-pat!)
+function qSearch(fb, alpha, beta, side, ply, qDepth) {
+  searchNodes++;
+  if ((searchNodes & 2047) === 0 && performance.now() > searchDeadline) {
+    searchTimeUp = true;
+    return 0;
+  }
 
-    var possibleTurns = generateAllValidTurns(currentSide, boardState);
-    
-    // Terminal state (Loss for current side)
-    if (possibleTurns.length === 0) {
-        return isMaximizing ? -100000 : 100000;
-    }
-    
-    if (depth <= 0) {
-        if (aiDifficulty >= 5) {
-            return quiescenceSearch(boardState, alpha, beta, isMaximizing, aiSideChar, 0);
-        } else {
-            return evaluateBoard(boardState, aiSideChar);
-        }
-    }
+  var caps = genFastTurns(fb, side, true);
+  if (caps.length === 0 || qDepth >= 8 || ply >= 62) {
+    return evalFastBoard(fb, side);
+  }
 
-    if (isMaximizing) {
-        var maxEval = -Infinity;
-        for (var i = 0; i < possibleTurns.length; i++) {
-            var simB = applyTurn(boardState, possibleTurns[i]);
-            
-            var ev = minimax(simB, depth - 1, alpha, beta, false, aiSideChar);
-            maxEval = Math.max(maxEval, ev);
-            alpha = Math.max(alpha, ev);
-            if (beta <= alpha) break; 
-        }
-        return maxEval;
-    } else {
-        var minEval = Infinity;
-        for (var i = 0; i < possibleTurns.length; i++) {
-            var simB = applyTurn(boardState, possibleTurns[i]);
-            
-            var ev = minimax(simB, depth - 1, alpha, beta, true, aiSideChar);
-            minEval = Math.min(minEval, ev);
-            beta = Math.min(beta, ev);
-            if (beta <= alpha) break; 
-        }
-        return minEval;
-    }
+  var best = -1000000;
+  var childBoard = boardStack[ply];
+  for (var i = 0; i < caps.length; i++) {
+    applyFastTurn(fb, childBoard, caps[i]);
+    var sc = -qSearch(childBoard, -beta, -alpha, -side, ply + 1, qDepth + 1);
+    if (searchTimeUp) return 0;
+    if (sc > best) best = sc;
+    if (sc > alpha) alpha = sc;
+    if (alpha >= beta) break;
+  }
+  return best;
 }
+
+// Negamax with PVS, Correct Alpha-Beta Transposition Table, Killer & History Heuristics
+function negamax(fb, depth, alpha, beta, side, ply) {
+  searchNodes++;
+  if ((searchNodes & 2047) === 0 && performance.now() > searchDeadline) {
+    searchTimeUp = true;
+    return 0;
+  }
+
+  var origAlpha = alpha;
+  var hPair = computeHash(fb, side);
+  var ttIdx = hPair[0] & TT_MASK;
+  var ttKeyVal = hPair[1];
+  var ttBestMove = 0;
+
+  if (ttFlag[ttIdx] !== 0 && ttKey[ttIdx] === ttKeyVal) {
+    ttBestMove = ttMove[ttIdx];
+    if (ttDepth[ttIdx] >= depth) {
+      var cachedScore = ttScore[ttIdx];
+      // Adjust mate scores back to current ply
+      if (cachedScore > 90000) cachedScore -= ply;
+      else if (cachedScore < -90000) cachedScore += ply;
+
+      var fl = ttFlag[ttIdx];
+      if (fl === 1) return cachedScore;
+      if (fl === 2 && cachedScore >= beta) return cachedScore;
+      if (fl === 3 && cachedScore <= alpha) return cachedScore;
+    }
+  }
+
+  var turns = genFastTurns(fb, side, false);
+  if (turns.length === 0) {
+    return -100000 + ply; // Current side has no legal moves -> loses
+  }
+
+  if (depth <= 0 || ply >= 54) {
+    if (searchUseQuiescence && turns[0].isCap) {
+      return qSearch(fb, alpha, beta, side, ply, 0);
+    }
+    return evalFastBoard(fb, side);
+  }
+
+  // Forced single-move extension: if only 1 legal move exists (e.g. forced capture), don't burn depth!
+  var ext = (turns.length === 1 && ply < 24) ? 1 : 0;
+  var nextDepth = depth - 1 + ext;
+
+  // Move Ordering
+  var n = turns.length;
+  if (n > 1) {
+    var k1 = killerMove1[ply];
+    var k2 = killerMove2[ply];
+    for (var m = 0; m < n; m++) {
+      var tObj = turns[m];
+      var mCode = (tObj.from << 6) | tObj.to;
+      var prio = 0;
+      if (mCode === ttBestMove) prio = 1000000;
+      else if (tObj.isCap) prio = 500000 + tObj.seq.length * 1000;
+      else {
+        var pv = fb[tObj.from];
+        var toR = tObj.to >> 3;
+        if ((pv === 1 && toR === 0) || (pv === -1 && toR === 7)) prio += 10000;
+        if (mCode === k1) prio += 5000;
+        else if (mCode === k2) prio += 3000;
+        prio += historyTable[mCode];
+      }
+      tObj.prio = prio;
+    }
+    turns.sort(function(a, b) { return b.prio - a.prio; });
+  }
+
+  var bestScore = -1000000;
+  var bestMoveCode = (turns[0].from << 6) | turns[0].to;
+  var childBoard = boardStack[ply];
+
+  for (var i = 0; i < n; i++) {
+    var tMove = turns[i];
+    var code = (tMove.from << 6) | tMove.to;
+    applyFastTurn(fb, childBoard, tMove);
+
+    var score;
+    if (i === 0) {
+      score = -negamax(childBoard, nextDepth, -beta, -alpha, -side, ply + 1);
+    } else {
+      // Principal Variation Search (PVS) null-window probe
+      score = -negamax(childBoard, nextDepth, -alpha - 1, -alpha, -side, ply + 1);
+      if (!searchTimeUp && score > alpha && score < beta) {
+        score = -negamax(childBoard, nextDepth, -beta, -alpha, -side, ply + 1);
+      }
+    }
+
+    if (searchTimeUp) return 0;
+
+    if (score > bestScore) {
+      bestScore = score;
+      bestMoveCode = code;
+    }
+    if (score > alpha) {
+      alpha = score;
+    }
+    if (alpha >= beta) {
+      if (!tMove.isCap) {
+        if (killerMove1[ply] !== code) {
+          killerMove2[ply] = killerMove1[ply];
+          killerMove1[ply] = code;
+        }
+        historyTable[code] += depth * depth;
+      }
+      break;
+    }
+  }
+
+  // Store in Transposition Table (only if search wasn't aborted)
+  if (!searchTimeUp) {
+    var storeScore = bestScore;
+    if (storeScore > 90000) storeScore += ply;
+    else if (storeScore < -90000) storeScore -= ply;
+
+    var flag = 1; // EXACT
+    if (bestScore <= origAlpha) flag = 3; // UPPER
+    else if (bestScore >= beta) flag = 2; // LOWER
+
+    ttKey[ttIdx] = ttKeyVal;
+    ttDepth[ttIdx] = depth;
+    ttFlag[ttIdx] = flag;
+    ttScore[ttIdx] = storeScore;
+    ttMove[ttIdx] = bestMoveCode;
+  }
+
+  return bestScore;
+}
+
+// Russian Checkers Opening Book (Black's textbook master replies to White's move 1)
+var RUSSIAN_OPENING_BOOK = {
+  '5,2-4,3': [ { from: 17, to: 24 }, { from: 21, to: 30 }, { from: 19, to: 26 } ], // C3-D4 -> B6-A5 / F6-G5 / D6-C5
+  '5,2-4,1': [ { from: 17, to: 24 }, { from: 19, to: 26 } ],                     // C3-B4 -> B6-A5 / D6-C5
+  '5,4-4,3': [ { from: 19, to: 26 }, { from: 21, to: 30 } ],                     // E3-D4 -> D6-C5 / F6-G5
+  '5,4-4,5': [ { from: 19, to: 26 }, { from: 21, to: 28 } ],                     // E3-F4 -> D6-C5 / F6-E5
+  '5,6-4,5': [ { from: 21, to: 28 }, { from: 19, to: 26 } ],                     // G3-F4 -> F6-E5 / D6-C5
+  '5,6-4,7': [ { from: 17, to: 26 }, { from: 19, to: 26 } ],                     // G3-H4 -> B6-C5 / D6-C5
+  '5,0-4,1': [ { from: 17, to: 24 }, { from: 19, to: 26 } ]                      // A3-B4 -> B6-A5 / D6-C5
+};
 
 function doAITurn() {
   if (gameOver || turn !== aiSide) {
@@ -1241,7 +1541,11 @@ function doAITurn() {
       return;
   }
 
-  // Handle Forced Multi-Jumps perfectly (respecting already-captured ghosts and maximum capture)
+  searchRulesIndian = (currentRuleset === 'indian');
+  searchUseQuiescence = (aiDifficulty >= 4);
+  var sideNum = (turn === 'w') ? 1 : -1;
+
+  // 1. Handle Forced Multi-Jump continuations
   if (multiJumpPiece) {
     var allSeqs = generateAllJumpSequences(
         multiJumpPiece.r,
@@ -1250,95 +1554,168 @@ function doAITurn() {
         b,
         removedDuringTurn
     );
-    var maxLen = 0;
-    for (var s = 0; s < allSeqs.length; s++) {
-        if (allSeqs[s].length > maxLen) maxLen = allSeqs[s].length;
-    }
-    var sequences = [];
-    for (var s2 = 0; s2 < allSeqs.length; s2++) {
-        if (allSeqs[s2].length === maxLen) sequences.push(allSeqs[s2]);
-    }
+    var sequences = allSeqs;
 
     if (sequences.length > 0) {
         var bestCapMove = sequences[0][0];
-        
-        if (aiDifficulty >= 4 && sequences.length > 1) {
-             var bestScore = -Infinity;
-             for (var i=0; i<sequences.length; i++) {
-                 var turnObj = { from: {r: multiJumpPiece.r, c: multiJumpPiece.c}, moves: sequences[i], isCapture: true };
-                 var simB = applyTurn(b, turnObj);
-                 // Clear pieces captured earlier in this same multi-jump turn before evaluating
-                 for (var g=0; g<removedDuringTurn.length; g++) {
-                     simB[removedDuringTurn[g].r][removedDuringTurn[g].c] = null;
-                 }
-                 var score = minimax(simB, aiDifficulty >= 5 ? 5 : 3, -Infinity, Infinity, false, turn);
-                 if (score > bestScore) { 
-                     bestScore = score; 
-                     bestCapMove = sequences[i][0]; 
-                 }
-             }
+        if (sequences.length > 1 && aiDifficulty >= 3) {
+            var fbRoot = boardToFlat(b);
+            for (var g = 0; g < removedDuringTurn.length; g++) {
+                fbRoot[(removedDuringTurn[g].r << 3) | removedDuringTurn[g].c] = 0;
+            }
+            var bestScore = -1000000;
+            searchNodes = 0;
+            searchTimeUp = false;
+            searchDeadline = performance.now() + (aiDifficulty >= 6 ? 700 : 350);
+            var contDepth = aiDifficulty >= 6 ? 8 : (aiDifficulty >= 5 ? 6 : 4);
+
+            for (var i = 0; i < sequences.length; i++) {
+                var simFlat = new Int8Array(fbRoot);
+                var currSq = (multiJumpPiece.r << 3) | multiJumpPiece.c;
+                var pieceV = simFlat[currSq];
+                simFlat[currSq] = 0;
+                for (var h = 0; h < sequences[i].length; h++) {
+                    var hop = sequences[i][h];
+                    simFlat[(hop.cap.r << 3) | hop.cap.c] = 0;
+                    if (pieceV === 1 && hop.r === 0) pieceV = 2;
+                    else if (pieceV === -1 && hop.r === 7) pieceV = -2;
+                    currSq = (hop.r << 3) | hop.c;
+                }
+                simFlat[currSq] = pieceV;
+                var sc = -negamax(simFlat, contDepth, -1000000, 1000000, -sideNum, 1);
+                if (sc > bestScore) {
+                    bestScore = sc;
+                    bestCapMove = sequences[i][0];
+                }
+            }
         } else if (sequences.length > 1) {
-             bestCapMove = sequences[Math.floor(Math.random() * sequences.length)][0];
+            bestCapMove = sequences[Math.floor(Math.random() * sequences.length)][0];
         }
-        
-        setTimeout(function() { 
-            handleTap(bestCapMove.r, bestCapMove.c, true); 
+
+        setTimeout(function() {
+            handleTap(bestCapMove.r, bestCapMove.c, true);
             if (thinkingOverlay && (turn !== aiSide || gameOver)) thinkingOverlay.classList.remove('active');
-        }, 350);
+        }, 320);
     } else {
         if (thinkingOverlay) thinkingOverlay.classList.remove('active');
     }
     return;
   }
 
-  var possibleTurns = generateAllValidTurns(turn, b);
-  if (possibleTurns.length === 0) {
+  var rootFlat = boardToFlat(b);
+  var turns = genFastTurns(rootFlat, sideNum, false);
+  if (turns.length === 0) {
       if (thinkingOverlay) thinkingOverlay.classList.remove('active');
       return;
   }
 
-  var searchDepth = 1;
-  if (aiDifficulty === 1) searchDepth = 1; 
-  if (aiDifficulty === 2) searchDepth = 3; 
-  if (aiDifficulty === 3) searchDepth = 4; 
-  if (aiDifficulty === 4) searchDepth = 5; 
-  if (aiDifficulty === 5) searchDepth = 6; 
-  if (aiDifficulty === 6) searchDepth = 7; // Extremely deep, bug-free, deterministic search
+  var chosenTurn = turns[0];
 
-  var bestScore = -Infinity;
-  var bestTurns = [];
+  // 2. Instant execution if only 1 legal move exists (e.g. forced capture)
+  if (turns.length === 1) {
+      chosenTurn = turns[0];
+  } else if (aiDifficulty >= 5 && currentRuleset === 'russian' && historyStack.length === 2 && lastMove) {
+      // 3. Opening Book lookup on Black's first move
+      var openKey = lastMove.from.r + ',' + lastMove.from.c + '-' + lastMove.to.r + ',' + lastMove.to.c;
+      var bookList = RUSSIAN_OPENING_BOOK[openKey];
+      if (bookList && bookList.length > 0) {
+          var pick = bookList[Math.floor(Math.random() * bookList.length)];
+          for (var bi = 0; bi < turns.length; bi++) {
+              if (turns[bi].from === pick.from && turns[bi].to === pick.to) {
+                  chosenTurn = turns[bi];
+                  break;
+              }
+          }
+      }
+  } else if (aiDifficulty === 1) {
+      // Easy: high randomness
+      var bestEasy = -1000000;
+      var tmpBoard = new Int8Array(64);
+      for (var ei = 0; ei < turns.length; ei++) {
+          applyFastTurn(rootFlat, tmpBoard, turns[ei]);
+          var eScore = evalFastBoard(tmpBoard, sideNum) + (Math.random() * 450);
+          if (eScore > bestEasy) {
+              bestEasy = eScore;
+              chosenTurn = turns[ei];
+          }
+      }
+  } else {
+      // 4. Iterative Deepening Negamax Search with Time Budget
+      var maxDepth = 4;
+      var timeBudget = 200;
+      if (aiDifficulty === 2) { maxDepth = 4; timeBudget = 180; }
+      else if (aiDifficulty === 3) { maxDepth = 6; timeBudget = 350; }
+      else if (aiDifficulty === 4) { maxDepth = 8; timeBudget = 650; }
+      else if (aiDifficulty === 5) { maxDepth = 11; timeBudget = 1000; }
+      else if (aiDifficulty === 6) { maxDepth = 16; timeBudget = 1400; } // Grandmaster: reaches depth 10-16+!
 
-  for (var i=0; i<possibleTurns.length; i++) {
-      var turnSeq = possibleTurns[i];
-      var simB = applyTurn(b, turnSeq);
-      
-      var score = 0;
-      if (aiDifficulty === 1) {
-          // Easy: completely random evaluations
-          score = evaluateBoard(simB, turn) + (Math.random() * 500); 
-      } else {
-          // Deep search
-          score = minimax(simB, searchDepth - 1, -Infinity, Infinity, false, turn);
+      // Age history table slightly so recent patterns stay fresh
+      for (var hi = 0; hi < 4096; hi++) historyTable[hi] >>= 2;
+      killerMove1.fill(0);
+      killerMove2.fill(0);
+
+      searchNodes = 0;
+      searchTimeUp = false;
+      searchDeadline = performance.now() + timeBudget;
+
+      var bestTurnOverall = turns[0];
+      var rootChild = new Int8Array(64);
+
+      for (var d = 2; d <= maxDepth; d++) {
+          var alpha = -1000000;
+          var beta = 1000000;
+          var iterBestTurn = null;
+          var iterBestScore = -1000000;
+
+          // Move previous iteration's best move to index 0 for instant cutoffs
+          if (bestTurnOverall !== turns[0]) {
+              var idxBest = turns.indexOf(bestTurnOverall);
+              if (idxBest > 0) {
+                  turns.splice(idxBest, 1);
+                  turns.unshift(bestTurnOverall);
+              }
+          }
+
+          for (var ti = 0; ti < turns.length; ti++) {
+              applyFastTurn(rootFlat, rootChild, turns[ti]);
+              var sc;
+              if (ti === 0) {
+                  sc = -negamax(rootChild, d - 1, -beta, -alpha, -sideNum, 1);
+              } else {
+                  sc = -negamax(rootChild, d - 1, -alpha - 1, -alpha, -sideNum, 1);
+                  if (!searchTimeUp && sc > alpha && sc < beta) {
+                      sc = -negamax(rootChild, d - 1, -beta, -alpha, -sideNum, 1);
+                  }
+              }
+              if (searchTimeUp) break;
+
+              if (sc > iterBestScore) {
+                  iterBestScore = sc;
+                  iterBestTurn = turns[ti];
+              }
+              if (sc > alpha) alpha = sc;
+          }
+
+          if (searchTimeUp) break; // Discard incomplete depth, keep last completed depth!
+          if (iterBestTurn) bestTurnOverall = iterBestTurn;
+
+          // Stop early if forced win found
+          if (iterBestScore > 90000) break;
       }
 
-      if (score > bestScore) {
-          bestScore = score;
-          bestTurns = [turnSeq];
-      } else if (score === bestScore) {
-          bestTurns.push(turnSeq);
-      }
+      chosenTurn = bestTurnOverall;
   }
 
-  // If there are multiple moves mathematically tied for perfectly equal outcomes, pick one randomly.
-  var chosenTurn = bestTurns[Math.floor(Math.random() * bestTurns.length)];
-  
-  var firstMove = chosenTurn.moves[0];
-  handleTap(chosenTurn.from.r, chosenTurn.from.c, true);
-  
-  setTimeout(function() { 
-      handleTap(firstMove.r, firstMove.c, true); 
+  // Execute the FIRST hop of chosenTurn
+  var fromR = chosenTurn.from >> 3, fromC = chosenTurn.from & 7;
+  var firstToSq = chosenTurn.isCap ? (chosenTurn.seq[0] >> 6) : chosenTurn.to;
+  var toR = firstToSq >> 3, toC = firstToSq & 7;
+
+  handleTap(fromR, fromC, true);
+  setTimeout(function() {
+      handleTap(toR, toC, true);
       if (thinkingOverlay && (turn !== aiSide || gameOver)) thinkingOverlay.classList.remove('active');
-  }, 350);
+  }, 320);
 }
 
 var btnUndo = document.getElementById('btn-undo');
@@ -1379,7 +1756,7 @@ if (btnMenu) {
 
 var btnResume = document.getElementById('btn-resume');
 if (btnResume) {
-    btnResume.addEventListener('pointerdown', function(e) {
+    btnResume.addEventListener('click', function(e) {
       e.preventDefault(); 
       if (menuModal) menuModal.classList.remove('open');
     });
@@ -1387,7 +1764,7 @@ if (btnResume) {
 
 var btnRestart = document.getElementById('btn-restart');
 if (btnRestart) {
-    btnRestart.addEventListener('pointerdown', function(e) {
+    btnRestart.addEventListener('click', function(e) {
       e.preventDefault(); 
       if (menuModal) menuModal.classList.remove('open'); 
       initGame(true); showMessage("New Game Started");
@@ -1396,7 +1773,7 @@ if (btnRestart) {
 
 var diffBtns = document.querySelectorAll('.diff-btn');
 for(var i=0; i<diffBtns.length; i++) {
-  diffBtns[i].addEventListener('pointerdown', function(e) {
+  diffBtns[i].addEventListener('click', function(e) {
     e.preventDefault();
     if (this.classList.contains('active')) return;
     
@@ -1413,7 +1790,7 @@ for(var i=0; i<diffBtns.length; i++) {
 }
 
 if (menuModal) {
-    menuModal.addEventListener('pointerdown', function(e) {
+    menuModal.addEventListener('click', function(e) {
       if (e.target === menuModal) menuModal.classList.remove('open');
     });
 }
@@ -1429,7 +1806,7 @@ document.body.classList.add(savedTheme);
 var themeBtns = document.querySelectorAll('.theme-btn');
 for(var i=0; i<themeBtns.length; i++) {
   if (themeBtns[i].dataset.theme === savedTheme) themeBtns[i].classList.add('active'); else themeBtns[i].classList.remove('active');
-  themeBtns[i].addEventListener('pointerdown', function(e) {
+  themeBtns[i].addEventListener('click', function(e) {
     e.preventDefault();
     for (var j=0; j<themeBtns.length; j++) themeBtns[j].classList.remove('active');
     this.classList.add('active');
@@ -1441,7 +1818,7 @@ for(var i=0; i<themeBtns.length; i++) {
 
 var modeBtns = document.querySelectorAll('.mode-btn');
 for(var i=0; i<modeBtns.length; i++) {
-  modeBtns[i].addEventListener('pointerdown', function(e) {
+  modeBtns[i].addEventListener('click', function(e) {
     e.preventDefault();
     if (this.classList.contains('active')) return; 
     if (confirm("Switching game modes will restart the current match. Continue?")) {
@@ -1456,7 +1833,7 @@ for(var i=0; i<modeBtns.length; i++) {
 
 var rulesBtns = document.querySelectorAll('.rules-btn');
 for(var i=0; i<rulesBtns.length; i++) {
-  rulesBtns[i].addEventListener('pointerdown', function(e) {
+  rulesBtns[i].addEventListener('click', function(e) {
     e.preventDefault();
     if (this.classList.contains('active')) return; 
     if (confirm("Switching rules will restart the current match. Continue?")) {
